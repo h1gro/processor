@@ -66,8 +66,6 @@ void StackPush(struct stack_t *stk, stackelem_t elem)
 
     stk->data[stk->size] = elem;
     stk->size++;
-    printf("cap = %d, size = %d,\n", stk->capacity, stk->size);
-    printf("elem = %d\n", stk->data[stk->size]);
 
     assert(stk->capacity);
     assert(stk->size);
@@ -94,7 +92,7 @@ stackelem_t StackPop(struct stack_t *stk)
 
 void ResizeIf(struct stack_t *stk, int pop_or_push)
 {
-    printf("pop_or_push = %d\n", pop_or_push);
+    //printf("pop_or_push = %d\n", pop_or_push);
     if (pop_or_push == PUSH && stk->size == stk->capacity)
     {
         stk->data[stk->capacity] = POISON;
@@ -105,7 +103,7 @@ void ResizeIf(struct stack_t *stk, int pop_or_push)
 
         stk->data[stk->capacity] = CANARY;
 
-        printf("push cap = %d\n", stk->capacity);
+        //printf("push cap = %d\n", stk->capacity);
     }
 
     if (pop_or_push == POP && stk->size * CAPAC_RESIZE + CAPAC_SHIFT < stk->capacity)
@@ -116,7 +114,7 @@ void ResizeIf(struct stack_t *stk, int pop_or_push)
 
         stk->data[stk->capacity] = CANARY;
 
-        printf("pop cap = %d\n", stk->capacity);
+        //printf("pop cap = %d\n", stk->capacity);
     }
 }
 int CheckForErrors(struct stack_t *stk)

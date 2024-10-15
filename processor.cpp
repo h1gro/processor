@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <sys\stat.h>
 #include <math.h>
 #include <assert.h>
 
@@ -9,33 +10,46 @@ int CountCommands();
 
 int main()
 {
+    struct stat commands = {};
+    stat(MACHINE_CODE, &commands);
+    printf("st_size = %d\n", commands.st_size);
+
     FILE *mach_code_read = fopen(MACHINE_CODE, "rb");
 
-    int file_size = CountCommands();
+    int* code = (int*) calloc(commands.st_size, sizeof(int));
+    printf("code: %s\n", code);
 
-    int* code = (int*) calloc(file_size, sizeof(int));
-    int num_elements = fread(code, 1, file_size, mach_code_read);
-
-    printf("num_elems = %d, file_size = %d\n", num_elements, file_size);
-
-    assert(num_elements == file_size);
+    printf("YAU TUT\n");
     assert(mach_code_read);
+
+    int i = 0;
+    while(!feof(mach_code_read))
+    {
+        printf("YAU TUT1\n");
+        fscanf(mach_code_read, "%d", &code[i]);
+        printf("%d\n", code[i]);
+        i++;
+    }
+    printf("code: %s\n", code);
 
     struct stack_t stk = {INIT(CANARY, stk)};
 
     StackCtor(&stk);
 
-    while(1)
+    for(i = 0; i < commands.st_size; i++)
     {
         int arg1 = 0;
-        int cmd = 0;
-        fscanf(mach_code_read, "%d", &cmd);
+        int cmd = code[i];
+
+        printf("code[i] = %d\n", code[i]);
         printf("cmd = %d\n", cmd);
+
         if (cmd == CMD_PUSH)
         {
-            fscanf(mach_code_read, "%d", &arg1);
+            arg1 = code[i+1];
             printf("arg1 = %d\n", arg1);
             StackPush(&stk, arg1);
+            i++;
         }
 
         else if (cmd == CMD_ADD)
