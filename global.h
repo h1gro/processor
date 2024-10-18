@@ -19,7 +19,7 @@
     #define INIT(canary, name) canary ,__FILE__, __LINE__, __func__, #name
 #else
     #define ON_DEBUG(code)
-    #define INIT(name)
+    #define INIT(canary, name)
 #endif
 
 typedef int stackelem_t;

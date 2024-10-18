@@ -1,7 +1,15 @@
 #ifndef PROCESSOR
 #define PROCESSOR
 
-#define MACHINE_CODE "machine_code.txt"
+const int NUM_REGISTERS = 5;
+
+struct spu_t
+{
+    struct stack_t stk;
+    int ip;
+    int* registers;
+    int* code;
+};
 
 enum comands
 {
@@ -17,6 +25,14 @@ enum comands
     CMD_SIN  = 9,
     CMD_COS  = 10,
     CMD_DUMP = 11,
+    CMD_JUMP = 12,
+    CMD_JB   = 13,
+    CMD_JBE  = 14,
+};
+
+enum registers
+{
+    JUMPS = 0,
 };
 
 #endif

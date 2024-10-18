@@ -9,7 +9,7 @@ void StackCtor(struct stack_t *stk)
 {
     assert(stk);
 
-    stk->output = fopen(DUMP_FILE, "w");
+    stk->output = fopen(DUMP_FILE, "w+");
 
     #ifdef DEBUG
         stk->canary1 = CANARY;
@@ -77,23 +77,25 @@ void StackPush(struct stack_t *stk, stackelem_t elem)
 stackelem_t StackPop(struct stack_t *stk)
 {
     STACK_CHECK(stk);
-    stackelem_t discared_elem = stk->data[stk->size];
     stk->data[stk->size] = POISON;
 
     int pop_or_push = POP;
     ResizeIf(stk, pop_or_push);
 
     stk->size--;
-
+    stackelem_t discared_elem = stk->data[stk->size];
+    StackDump(stk, __func__, __FILE__, __LINE__, POP);
     STACK_CHECK(stk);
 
-    return stk->data[stk->size];
+    printf("discared_elem = %d\n", discared_elem);
+
+    return discared_elem;
 }
 
 void ResizeIf(struct stack_t *stk, int pop_or_push)
 {
     //printf("pop_or_push = %d\n", pop_or_push);
-    if (pop_or_push == PUSH && stk->size == stk->capacity)
+    if (pop_or_push == PUSH && stk->size == stk->capacity) 
     {
         stk->data[stk->capacity] = POISON;
         stk->capacity = stk->capacity * CAPAC_RESIZE;
@@ -119,6 +121,7 @@ void ResizeIf(struct stack_t *stk, int pop_or_push)
 }
 int CheckForErrors(struct stack_t *stk)
 {
+    //printf("size = %d\n", stk->size);
     #ifdef LEVEL_OF_PROTECTION
         assert(stk);
         assert(stk->data);
@@ -212,11 +215,13 @@ void StackDump(struct stack_t *stk, const char* func, const char* file, int line
 {
     assert(stk);
     assert(stk->data);
-    assert(stk->file);
-    assert(stk->func);
-    assert(stk->name);
 
     #ifdef DEBUG
+
+        assert(stk->file);
+        assert(stk->func);
+        assert(stk->name);
+
         fprintf(stk->output, "called from %s:%d %s\n"
                         "name %s born at %s:%d(%s)\n",
                         func, line, file, stk->name,
@@ -248,7 +253,9 @@ void StackDump(struct stack_t *stk, const char* func, const char* file, int line
         }
     }
 
-    fclose(stk->output);
+    fprintf(stk->output, "\n");
+
+    //fclose(stk->output);
 }
 
 void StackErrorOutput(struct stack_t *stk)
