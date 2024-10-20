@@ -9,24 +9,21 @@ int main()
 {
     struct file_t file = {};
 
-    OpenFiles(&file);
+    StrFilesCtor(&file);
 
     WriteToFile(&file);
 
-    fclose(file.byte_code_write);
-    fclose(file.commands_file);
+    StrFilesDtor(&file);
 
     return 0;
 }
 
-void WriteToFile(struct file_t* file)
+void WriteToFile(struct file_t* file) //TODO read strcpy()
 {
     int arg = 0;
     while (fscanf(file->commands_file, "%s", file->command) != EOF) //TODO use onegin // make dir lib and stack in this
     {
         assert(file->command);
-
-        //printf("command: %s\n", command);
 
         COMPILATION_ARG("push", PUSH);
 
@@ -44,21 +41,19 @@ void WriteToFile(struct file_t* file)
 
         COMPILATION("mul", MUL);
 
-        COMPILATION("dump", DUMP);
+        COMPILATION("dump", DUMP); //TODO not printf after scanf use buffer
 
         COMPILATION("hlt", HLT);
     }
 }
 
-void OpenFiles(struct file_t* file)
-{
-    file->commands_file   = fopen(INPUT_COMMANDS, "r"); //TODO && directory asm
-    file->byte_code_write = fopen(BYTE_CODE_W, "w");
 
-    assert(file->commands_file);
-    assert(file->byte_code_write);
-
-    file->command = (char*) calloc(MAX_SIZE_COM, sizeof(char));
-
-    assert(file->command);
-}
+//TODO
+//0) Theory
+//1) vsl or linux
+//2) разбей всё на папки
+//3) todo
+//4) label :1 not use label into stack
+//5) registers - use bytecode
+//6) memory push [1] and 6.5) memory regs push [rax]
+//7) Sdl and sfml

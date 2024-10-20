@@ -1,18 +1,32 @@
 #ifndef READ_BYTE_FILE
 #define READ_BYTE_FILE
 
-static const char* BYTE_CODE_R = "byte_code.txt";
-
 enum consts
 {
-    NUM_ARGS_PUSH = 1,
-    NUM_ARGS_JMP  = 1,
+    COMMAND_SHIFT = 1,
+    COMMAND_ARGS  = 1,
 };
 
-void ReadByteFile(struct spu_t* spu, struct stat* commands);
+//TODO read ABOUT direct # and ##
+
+#define IP_SHIFT(COMPARISON_SIGN)                                    \
+do{                                                                  \
+    arg1 = StackPop(&spu->stk);                                      \
+    arg2 = StackPop(&spu->stk);                                      \
+                                                                     \
+    if(arg2 COMPARISON_SIGN arg1)                                    \
+    {                                                                \
+        spu->ip = spu->code[spu->ip + COMMAND_ARGS] - COMMAND_SHIFT; \
+    }                                                                \
+                                                                     \
+    spu->ip++;                                                       \
+    break;                                                           \
+}while(0)
+
+void ReadByteFile(struct spu_t* spu);
 void FillingCode(struct spu_t* spu, FILE* mach_code_read);
 void InitStat(struct stat* commands);
-void LaunchCommand(struct stat* commands, struct spu_t* spu);
+void LaunchCommand(struct spu_t* spu);
 
 #endif
 

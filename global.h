@@ -8,7 +8,7 @@
 #define STACK_CHECK(stk) (StackCheck(stk, __FILE__, __LINE__, __func__));
 
 //on/off debug mode
-#define DEBUG 153.153
+//#define DEBUG 153.153
 
 #define DUMP_FILE "dump.txt"
 

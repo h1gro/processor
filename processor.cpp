@@ -1,25 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 
 #include "global.h"
 #include "processor.h"
 #include "ReadByteFile.h"
-#include "C_Dtor.h"
+#include "SpuC_Dtor.h"
+#include "C_Dtors.h"
 
 int main()
 {
     struct spu_t spu     = {};
     struct stat commands = {};
 
-    InitStat(&commands);
-    StackCtor(&spu.stk);
+    Ctors(&spu, &commands);
 
-    ReadByteFile(&spu, &commands);
+    ReadByteFile(&spu);
 
-    LaunchCommand(&commands, &spu);
+    LaunchCommand(&spu);
 
-    SpuDtor(&spu);
+    Dtors(&spu);
     return 0;
 }
 

@@ -1,14 +1,11 @@
 #ifndef ASSEMBLER
 #define ASSEMBLER
 
-static const char* INPUT_COMMANDS = "commands.txt";
-static const char* BYTE_CODE_W = "byte_code.txt";
-
-const int MAX_SIZE_COM = 4;
+const int MAX_SIZE_COM = 10;
 
 #define COMPILATION(COMMAND_NAME, COMMAND_ENUM)                        \
 do {                                                                   \
-    if (stricmp(file->command, COMMAND_NAME) == 0)                     \
+    if (strcmp((const char*)file->command, COMMAND_NAME) == 0)        \
     {                                                                  \
         fprintf(file->byte_code_write, "%d\n", COMMAND_ENUM);          \
     }                                                                  \
@@ -16,12 +13,12 @@ do {                                                                   \
 
 #define COMPILATION_ARG(COMMAND_NAME, COMMAND_ENUM)                    \
 do {                                                                   \
-    if (stricmp(file->command, COMMAND_NAME) == 0)                     \
+    if (strcmp((const char*)file->command, COMMAND_NAME) == 0)        \
     {                                                                  \
         fscanf(file->commands_file, "%d", &arg);                       \
         fprintf(file->byte_code_write, "%d %d\n", COMMAND_ENUM, arg);  \
     }                                                                  \
-} while(0)
+} while(0) //TODO COMPILATION_ARG && use func check args
 
 enum comands
 {
@@ -46,10 +43,11 @@ struct file_t
 {
     FILE *commands_file;
     FILE *byte_code_write;
-    const char* command;
+    char* command;
 };
 
 void WriteToFile(struct file_t* file);
-void OpenFiles(struct file_t* file);
+void StrFilesCtor(struct file_t* file);
+void StrFilesDtor(struct file_t* file);
 
 #endif

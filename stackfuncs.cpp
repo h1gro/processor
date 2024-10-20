@@ -20,7 +20,7 @@ void StackCtor(struct stack_t *stk)
     stk->size = 0;
     stk->error_code = NO_ERRORS;
     stk->capacity = CAPACITY;
-    stk->data = (stackelem_t*) calloc(stk->capacity + NUM_CANARIES_BUF, sizeof(stackelem_t)) + NUM_CANARIES_IN_LEFT;
+    stk->data = (stackelem_t*) calloc((size_t)(stk->capacity + NUM_CANARIES_BUF), sizeof(stackelem_t)) + NUM_CANARIES_IN_LEFT;
 
     FillingDataPoison(stk->data, stk->capacity - stk->size);
 
@@ -61,6 +61,11 @@ void StackPush(struct stack_t *stk, stackelem_t elem)
     assert(stk->data);
     STACK_CHECK(stk);
 
+    fprintf(stk->output, "\n\nfirst DUMP\n");
+
+    StackDump(stk, __func__, __FILE__, __LINE__, PUSH);
+
+    fprintf(stk->output, "push elem = %d\n", elem);
     int pop_or_push = PUSH;
     ResizeIf(stk, pop_or_push);
 
@@ -70,6 +75,9 @@ void StackPush(struct stack_t *stk, stackelem_t elem)
     assert(stk->capacity);
     assert(stk->size);
 
+    fprintf(stk->output, "\n\nsecond DUMP\n");
+    StackDump(stk, __func__, __FILE__, __LINE__, PUSH);
+
     STACK_CHECK(stk);
 
 }
@@ -77,29 +85,37 @@ void StackPush(struct stack_t *stk, stackelem_t elem)
 stackelem_t StackPop(struct stack_t *stk)
 {
     STACK_CHECK(stk);
-    stk->data[stk->size] = POISON;
+
+    fprintf(stk->output, "\n\nfirst POP\n");
+
+    StackDump(stk, __func__, __FILE__, __LINE__, POP);
+
+    fprintf(stk->output, "pop elem = %d\n", stk->data[stk->size - 1]);
+    stackelem_t discared_elem = stk->data[stk->size - 1];
+    stk->data[stk->size - 1] = POISON;
 
     int pop_or_push = POP;
     ResizeIf(stk, pop_or_push);
 
     stk->size--;
-    stackelem_t discared_elem = stk->data[stk->size];
-    StackDump(stk, __func__, __FILE__, __LINE__, POP);
     STACK_CHECK(stk);
 
     printf("discared_elem = %d\n", discared_elem);
+    fprintf(stk->output, "\n\nsecond POP\n");
 
+    StackDump(stk, __func__, __FILE__, __LINE__, POP);
+    fprintf(stk->output, "discared_elem = %d\n", discared_elem);
     return discared_elem;
 }
 
 void ResizeIf(struct stack_t *stk, int pop_or_push)
 {
     //printf("pop_or_push = %d\n", pop_or_push);
-    if (pop_or_push == PUSH && stk->size == stk->capacity) 
+    if (pop_or_push == PUSH && stk->size == stk->capacity)
     {
         stk->data[stk->capacity] = POISON;
         stk->capacity = stk->capacity * CAPAC_RESIZE;
-        stk->data = (stackelem_t*) realloc(stk->data - NUM_CANARIES_IN_LEFT, (stk->capacity + NUM_CANARIES_BUF) * sizeof(stackelem_t)) + NUM_CANARIES_IN_LEFT;
+        stk->data = (stackelem_t*) realloc(stk->data - NUM_CANARIES_IN_LEFT, (size_t)(stk->capacity + NUM_CANARIES_BUF) * sizeof(stackelem_t)) + NUM_CANARIES_IN_LEFT;
 
         FillingDataPoison(stk->data + stk->size, stk->capacity - stk->size);
 
@@ -112,7 +128,7 @@ void ResizeIf(struct stack_t *stk, int pop_or_push)
     {
         stk->capacity = stk->capacity / CAPAC_RESIZE;
 
-        stk->data = (stackelem_t*) realloc(stk->data - NUM_CANARIES_IN_LEFT, (stk->capacity + NUM_CANARIES_BUF) * sizeof(stackelem_t)) + NUM_CANARIES_IN_LEFT;
+        stk->data = (stackelem_t*) realloc(stk->data - NUM_CANARIES_IN_LEFT, (size_t)(stk->capacity + NUM_CANARIES_BUF) * sizeof(stackelem_t)) + NUM_CANARIES_IN_LEFT;
 
         stk->data[stk->capacity] = CANARY;
 

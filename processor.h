@@ -9,6 +9,7 @@ struct spu_t
     int ip;
     int* registers;
     int* code;
+    int code_elems;
 };
 
 enum comands
