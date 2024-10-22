@@ -11,14 +11,17 @@ flag = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-loop-
 #run assembler
 assembler: assembler
 
-assembler: assembler.o StrFilesC_Dtor.o
-	g++ assembler.o StrFilesC_Dtor.o $(flag) -o assembler
+assembler: assembler.o StrFilesC_Dtor.o label_table.o
+	g++ assembler.o StrFilesC_Dtor.o label_table.o $(flag) -o assembler
 
 assembler.o: assembler.cpp
 	g++ -c $(flag) assembler.cpp
 
 StrFilesC_Dtor.o: StrFilesC_Dtor.cpp
 	g++ -c $(flag) StrFilesC_Dtor.cpp
+
+label_table.o: label_table.cpp
+	g++ -c $(flag) label_table.cpp
 
 #--------------------------------------------------------------------------------------#
 
@@ -42,7 +45,7 @@ ReadByteFile.o: ReadByteFile.cpp
 
 C_Dtors.o: C_Dtors.cpp
 	g++ -c $(flag) C_Dtors.cpp
-	
+
 #--------------------------------------------------------------------------------------#
 
 #clean

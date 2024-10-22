@@ -125,3 +125,53 @@ data [1] = -153 (POISON)
 data [2] = -153 (POISON)
 data [3] = 531 (CANARY)
 
+
+
+first DUMP
+size 1
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 6
+data [1] = -153 (POISON)
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+push elem = 5
+
+
+second DUMP
+size 2
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 6
+data [1] = 5
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+
+
+first DUMP
+size 2
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 6
+data [1] = 5
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+push elem = 4
+
+
+second DUMP
+size 3
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 6
+data [1] = 5
+data [2] = 4
+data [3] = 531 (CANARY)
+

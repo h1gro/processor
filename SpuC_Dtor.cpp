@@ -7,8 +7,12 @@
 #include "processor.h"
 #include "SpuC_Dtor.h"
 
-void SpuCtor(struct spu_t* spu, struct stat* commands) //TODO assert
+void SpuCtor(struct spu_t* spu, struct stat* commands)
 {
+    assert(spu);
+    assert(commands);
+    assert(commands->st_size);
+    
     spu->code      = (int*) calloc((size_t)(commands->st_size), sizeof(int));
     spu->registers = (int*) calloc(NUM_REGISTERS, sizeof(int));
 
@@ -20,6 +24,8 @@ void SpuCtor(struct spu_t* spu, struct stat* commands) //TODO assert
 
 void SpuDtor(struct spu_t* spu)
 {
+    assert(spu);
+
     spu->ip = 0;
 
     free(spu->code);

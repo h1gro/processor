@@ -12,6 +12,8 @@ const char* BYTE_CODE_R = "byte_code.txt";
 
 void InitStat(struct stat* commands) //TODO SPLIT INTO PROGRAMMS
 {
+    assert(commands);
+
     stat(BYTE_CODE_R, commands);
 
     assert(commands->st_size);
@@ -21,6 +23,8 @@ void InitStat(struct stat* commands) //TODO SPLIT INTO PROGRAMMS
 
 void ReadByteFile(struct spu_t* spu)
 {
+    assert(spu);
+
     FILE *byte_code_read = fopen(BYTE_CODE_R, "rb");
 
     assert(byte_code_read);
@@ -32,6 +36,9 @@ void ReadByteFile(struct spu_t* spu)
 
 void FillingCode(struct spu_t* spu, FILE* byte_code_read)
 {
+    assert(spu);
+    assert(byte_code_read);
+
     while(!feof(byte_code_read))
     {
         fscanf(byte_code_read, "%d", &spu->code[spu->ip]); //TODO use-library func
@@ -46,6 +53,7 @@ void LaunchCommand(struct spu_t* spu)
 {
     assert(spu->code);
     assert(spu->registers);
+    assert(spu->code_elems);
 
     for(spu->ip = 0; spu->ip < spu->code_elems; spu->ip++)
     {
@@ -67,6 +75,13 @@ void LaunchCommand(struct spu_t* spu)
 
                        spu->ip++;
                        break;
+
+        case CMD_PUSHR: arg1 = spu->code[spu->ip + COMMAND_ARGS];
+                        printf("register = %d\n", arg1);
+                        PushRegister(spu->registers, arg1);
+
+                        spu->ip++;
+                        break;
 
         case CMD_ADD:  StackPush(&spu->stk, StackPop(&spu->stk) + StackPop(&spu->stk)); //TODO  проверку в стеке через if а не assert(), лучше добавить проверку и в проц.
                        break;
@@ -101,7 +116,7 @@ void LaunchCommand(struct spu_t* spu)
         case CMD_OUT:  printf("%d", StackPop(&spu->stk));
                        break;
 
-        case CMD_JUMP: spu->ip = spu->code[spu->ip + COMMAND_ARGS] - COMMAND_SHIFT;
+        case CMD_JUMP: if(spu)spu->ip = spu->code[spu->ip + COMMAND_ARGS] - COMMAND_SHIFT;
                        printf("ip after jmp = %d\n", spu->ip);
                        break;
 
@@ -115,5 +130,32 @@ void LaunchCommand(struct spu_t* spu)
         }
     }
 
+    printf("ax = %d, bx = %d, cx = %d, dx = %d\n", spu->registers[0], spu->registers[1], spu->registers[2], spu->registers[3]);
+
     return;
+}
+
+void PushRegister(int* data, int reg)
+{
+    assert(data);
+
+    printf("\nreg = %d\n", reg);
+    switch(reg)
+    {
+    case AX: REGS(AX);
+             break;
+
+    case BX: REGS(BX);
+             break;
+
+    case CX: REGS(CX);
+             break;
+
+    case DX: REGS(DX);
+             break;
+
+    default: printf("\n<<<<<<WRONG REGISTER!>>>>>>\n\n");
+    }
+    
+    printf("here\n");
 }
