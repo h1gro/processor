@@ -8,14 +8,11 @@ flag = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-loop-
 #run processor
 processor: processor
 
-processor: processor.o SpuC_Dtor.o ReadByteFile.o C_Dtors.o stackfuncs.o
-	g++ processor.o SpuC_Dtor.o ReadByteFile.o C_Dtors.o stackfuncs.o $(flag) -o processor
+processor: processor.o ReadByteFile.o C_Dtors.o stackfuncs.o LaunchCommand.o
+	g++ processor.o ReadByteFile.o C_Dtors.o stackfuncs.o LaunchCommand.o $(flag) -o processor
 
 processor.o: processor.cpp
 	g++ -c $(flag) processor.cpp
-
-SpuC_Dtor.o: SpuC_Dtor.cpp
-	g++ -c $(flag) SpuC_Dtor.cpp
 
 ReadByteFile.o: ReadByteFile.cpp
 	g++ -c $(flag) ReadByteFile.cpp
@@ -25,6 +22,9 @@ C_Dtors.o: C_Dtors.cpp
 
 stackfuncs.o: ../stack/stackfuncs.cpp
 	g++ -c $(flag) ../stack/stackfuncs.cpp
+
+LaunchCommand.o: LaunchCommand.cpp
+	g++ -c $(flag) LaunchCommand.cpp
 
 #--------------------------------------------------------------------------------------#
 

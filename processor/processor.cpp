@@ -5,22 +5,24 @@
 #include "../stack/global.h"
 #include "processor.h"
 #include "ReadByteFile.h"
-#include "SpuC_Dtor.h"
 #include "C_Dtors.h"
+#include "LaunchCommand.h"
 
 int main()
 {
     struct spu_t spu     = {};
     struct stat commands = {};
 
-    Ctors(&spu, &commands); //TODO rename
+    InitStat(&commands);
+    SpuCtor(&spu, &commands);
 
     ReadByteFile(&spu);
 
     LaunchCommand(&spu);
 
-    Dtors(&spu);
+    StackDtor(&spu.stk);
+    SpuDtor(&spu);
     return 0;
-}    
+}
 
 

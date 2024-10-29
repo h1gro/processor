@@ -1,20 +1,45 @@
 #include <stdio.h>
+#include <sys/stat.h>
 
 #include "../stack/global.h"
 #include "processor.h"
-#include "SpuC_Dtor.h"
 #include "C_Dtors.h"
 #include "ReadByteFile.h"
 
-void Ctors(struct spu_t* spu, struct stat* commands) //TODO объединить с spu ctor  в один файл
+void SpuCtor(struct spu_t* spu, struct stat* commands)
 {
-    InitStat(commands);
-    StackCtor(&spu->stk); //TODO перенести в spu
-    SpuCtor(spu, commands);
+    assert(spu);
+    assert(commands);
+    assert(commands->st_size);
+
+    spu->code      = (int*) calloc((size_t)(commands->st_size), sizeof(int));
+    spu->registers = (int*) calloc(NUM_REGISTERS, sizeof(int));
+
+    assert(spu->code);
+    assert(spu->registers);
+
+    StackCtor(&spu->stk);
+
+    spu->ip = 0;
 }
 
-void Dtors(struct spu_t* spu)
+void SpuDtor(struct spu_t* spu)
 {
-    StackDtor(&spu->stk);
-    SpuDtor(spu);
+    assert(spu);
+
+    spu->ip = 0;
+
+    free(spu->code);
+    free(spu->registers);
+}
+
+void InitStat(struct stat* commands)
+{
+    assert(commands);
+
+    stat(BYTE_CODE_R, commands);
+
+    assert(commands->st_size);
+
+    printf("st_size = %ld\n", commands->st_size);
 }
