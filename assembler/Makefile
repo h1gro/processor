@@ -8,20 +8,20 @@ flag = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-loop-
 #run assembler
 assembler: assembler # remove clean from building
 
-assembler: assembler.o StrFilesC_Dtor.o label_table.o WriteToFile.o
-	g++ assembler.o StrFilesC_Dtor.o label_table.o WriteToFile.o $(flag) -o assembler
+assembler: assembler.o StructAssmC_Dtor.o label_table.o CompileCommands.o
+	g++ assembler.o StructAssmC_Dtor.o label_table.o CompileCommands.o $(flag) -o assembler
 
 assembler.o: assembler.cpp
 	g++ -c $(flag) assembler.cpp
 
-StrFilesC_Dtor.o: StrFilesC_Dtor.cpp
-	g++ -c $(flag) StrFilesC_Dtor.cpp
+StructAssmC_Dtor.o: StructAssmC_Dtor.cpp
+	g++ -c $(flag) StructAssmC_Dtor.cpp
 
 label_table.o: label_table.cpp
 	g++ -c $(flag) label_table.cpp
 
-WriteToFile.o: WriteToFile.cpp
-	g++ -c $(flag) WriteToFile.cpp
+CompileCommands.o: CompileCommands.cpp
+	g++ -c $(flag) CompileCommands.cpp
 
 #--------------------------------------------------------------------------------------------------------------------------
 

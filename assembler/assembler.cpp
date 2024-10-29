@@ -4,7 +4,8 @@
 
 #include "assembler.h"
 #include "label_table.h"
-#include "WriteToFile.h"
+#include "CompileCommands.h"
+#include "StructAssmC_Dtor.h"
 
 int main()
 {
@@ -13,12 +14,12 @@ int main()
     struct label labels[NUMBER_OF_MARKS] = {};
 
     InitStat(&st_file);
-    StrFilesCtor(&global_assm, &st_file); //TODO отдельный буффер для кода
+    StructAssmCtor(&global_assm, &st_file); //TODO отдельный буффер для кода
     LabelsCtor(&global_assm); //TODO use Onegin + skip_spaces()
 
     CompileCommands(&global_assm, &st_file); //TODO двухпроходную компиляцуию
 
-    StrFilesDtor(&global_assm);
+    StructAssmDtor(&global_assm);
     LabelsDtor(&global_assm);
 
     return 0;
