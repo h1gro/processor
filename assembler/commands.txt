@@ -1,10 +1,10 @@
+push 10
 next:
 push 3
-push 2
-push 4
+push 15
+add
+push 9
 mul
-pushr ax
-jmp next:
-push 5
-push 4
+jmp next
 hlt
+

@@ -4,33 +4,23 @@
 
 #include "assembler.h"
 #include "label_table.h"
+#include "StructAssmC_Dtor.h"
 
-void LabelsCtor(struct assm* global_assm)
+void FindLabel(struct assembler* assm)
 {
-    assert(global_assm);
+    assert(assm);
+    assert(assm->command);
+    assert(assm->size_label_arr);
 
-    int poison = INVALID_ADDR;
-
-    FillingStructLabels(global_assm, poison);
-}
-
-void LabelsDtor(struct assm* global_assm)
-{
-    assert(global_assm);
-
-    int poison = NULL_ADDR;
-
-    FillingStructLabels(global_assm, poison);
-}
-
-void FindMark(struct assm* global_assm, int command)
-{
-    for(int i = 0; i < global_assm->size_label_arr; i++)
+    for (int i = 0; i < assm->size_label_arr; i++)
     {
-        if (strcmp((const char*)global_assm->command, (const char*)global_assm->labels[i].label) == 0)
+        assert(assm->labels[i].label);
+        assert(assm->labels[i].addr != INVALID_ADDR);
+
+        if (strcmp((const char*)assm->command, (const char*)assm->labels[i].label) == 0)
         {
-            printf("\n\n addr label = %d!!!\n\n\n", global_assm->labels[i].addr);
-            fprintf(global_assm->byte_code_write, "%d %d\n", command, global_assm->labels[i].addr);
+            printf("\n\n addr label = %d!!!\n\n\n", assm->labels[i].addr);
+            fprintf(assm->byte_code_write, "%d", assm->labels[i].addr);
         }
 
         else
@@ -40,11 +30,25 @@ void FindMark(struct assm* global_assm, int command)
     }
 }
 
-void FillingStructLabels(struct assm* global_assm, int poison)
+void LabelAssignment(struct assembler* assm)
 {
-    for(int i = 0; i < NUMBER_OF_MARKS; i++)
+    assert(assm->command);
+    assert(assm->labels);
+
+    assert(assm->labels[assm->size_label_arr].addr == -1);
+    assert(assm->labels[assm->size_label_arr].label);
+
+    if (assm->input_code[assm->index] == ':')
     {
-        global_assm->labels[i].addr = poison;
-        global_assm->labels[i].label = {};
+        assm->labels[assm->size_label_arr].addr  = assm->num_elem_file;
+
+        strcpy(assm->labels[assm->size_label_arr].label, (const char*)assm->command);
+
+        printf("ip_mark = %d, addr = %d, mark = %s\n",
+                assm->size_label_arr, assm->labels[assm->size_label_arr].addr,
+                assm->labels[assm->size_label_arr].label);
+
+        assm->num_elem_file++;
+        assm->size_label_arr++;
     }
 }

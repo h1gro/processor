@@ -1,61 +1,23 @@
-#ifndef COMPILE_COMMANDS
-#define COMPILE_COMMANDS
+#ifndef _COMPILE_COMMANDS_
+#define _COMPILE_COMMANDS_
 
-#define COMPILATION(COMMAND_NAME, COMMAND_ENUM)                                        \
-{                                                                                   \
-    if (strcmp((const char*)global_assm->command, COMMAND_NAME) == 0)                         \
-    {                                                                                  \
-        printf("\ni am in compilation (if)\n");                                        \
-        number_command++;                                                              \
-        fprintf(global_assm->byte_code_write, "%d\n", COMMAND_ENUM);                   \
-        continue;                                                                      \
-    }                                                                                   \
+#define COMPILATION(COMMAND_NAME, COMMAND_ENUM)                                      \
+{                                                                                    \
+    if (strcmp((const char*)assm->command, COMMAND_NAME) == 0)                       \
+    {                                                                                \
+        assm->num_elem_file++;                                                       \
+        fprintf(assm->byte_code_write, "%d ", COMMAND_ENUM);                         \
+        assm->last_command = COMMAND_ENUM;                                           \
+        CheckArg(assm);                                                              \
+        free(assm->command);                                                         \
+        checker = 1;                                                                 \
+        continue;                                                                    \
+    }                                                                                \
 }
 
-#define COMPILATION_ARG(COMMAND_NAME, COMMAND_ENUM)                                    \
-{                                                                                      \
-    if (strcmp((const char*)global_assm->command, COMMAND_NAME) == 0)                         \
-    {                                                                                  \
-        printf("\ni am in compilation_ARG\n");                                         \
-        fscanf(global_assm->commands_file, "%d", &arg);                                       \
-        number_command += 2;                                                           \
-        fprintf(global_assm->byte_code_write, "%d %d\n", COMMAND_ENUM, arg);                  \
-        continue;                                                                      \
-    }                                                                                  \
-} //TODO use func check args
-
-//TODO убрать этот дефайн
-#define COMPILATION_JMP(COMMAND_NAME, COMMAND_ENUM)                                    \
-{                                                                                      \
-    if (strcmp((const char*)global_assm->command, COMMAND_NAME) == 0)                         \
-    {                                                                                  \
-        printf("\ni am in compilation_JMP\n");                                         \
-        fscanf(global_assm->commands_file, "%s", jmp_arg);                                    \
-        number_command += 2;                                                           \
-                                                                                       \
-        assert(jmp_arg);                                                               \
-                                                                                       \
-        FindMark(global_assm, COMMAND_ENUM);                                 \
-        continue;                                                                      \
-    }                                                                                  \
-}
-//TODO убрать копипаст
-#define COMPILATION_REGS(COMMAND_NAME, COMMAND_ENUM)                                   \
-{                                                                                      \
-    if (strcmp((const char*)global_assm->command, COMMAND_NAME) == 0)                         \
-    {                                                                                  \
-        printf("\ni am in compilation_REGS\n");                                        \
-        int reg = DefineReg(global_assm);                                                     \
-        if (reg >= - NUM_REGS){                                                        \
-        number_command += 2;                                                           \
-        fprintf(global_assm->byte_code_write, "%d %d\n", COMMAND_ENUM, reg);}                 \
-        continue;                                                                      \
-    }                                                                                  \
-}
-
-#define REGS(COMMAND_NAME, COMMAND_ENUM)                                   \
-{                                                                          \
-    if (strcmp((const char*)reg, COMMAND_NAME) == 0){return COMMAND_ENUM;} \
+#define REGS(COMMAND_NAME, COMMAND_ENUM)                                             \
+{                                                                                    \
+    if (strcmp((const char*)assm->command, COMMAND_NAME) == 0){return COMMAND_ENUM;} \
 }
 
 enum comands
@@ -86,11 +48,16 @@ enum regs
     DX = - 4,
 };
 
-const int NUM_REGS   = 4;
-const int SIZE_REG   = 4;
-const int SIZE_LABEL = 10;
+const int INT_ARG      = 100;
+const int NUM_REGS     = 4;
+const int SIZE_REG     = 4;  // 2 symbols of register + \n + \r
+const int SIZE_LABEL   = 10;
+const int COMMAND_SIZE = 10;
 
-void LabelAssignment(struct assm* global_assm, int number_command);
+void CheckArg      (struct assembler* assm);
+void UniversalPush (struct assembler* assm);
+void WriteCommand  (struct assembler* assm);
+void SkipSpaces    (struct assembler* assm, int symbol0, int symbol1);
 //void WhatIsArg(struct assm* global_assm);
 
 #endif

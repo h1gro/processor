@@ -9,18 +9,21 @@
 
 int main()
 {
-    struct assm global_assm = {};
-    struct stat st_file     = {};
+    struct assembler assm                = {};
+    struct stat st_file                  = {};
     struct label labels[NUMBER_OF_MARKS] = {};
 
     InitStat(&st_file);
-    StructAssmCtor(&global_assm, &st_file); //TODO отдельный буффер для кода
-    LabelsCtor(&global_assm); //TODO use Onegin + skip_spaces()
 
-    CompileCommands(&global_assm, &st_file); //TODO двухпроходную компиляцуию
+    StructAssmCtor(&assm, &st_file); //TODO отдельный буффер для кода
 
-    StructAssmDtor(&global_assm);
-    LabelsDtor(&global_assm);
+    LabelsCtor(&assm); //TODO use Onegin + skip_spaces()
+
+    CompileCommands(&assm); //TODO двухпроходная компиляция не работает
+
+    StructAssmDtor(&assm);
+
+    LabelsDtor(&assm);
 
     return 0;
 }

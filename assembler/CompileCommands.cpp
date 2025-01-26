@@ -7,32 +7,34 @@
 #include "CompileCommands.h"
 #include "label_table.h"
 
-void CompileCommands(struct assm* global_assm, struct stat* st_file) //TODO read strcpy()
+void CompileCommands(struct assembler* assm) //TODO read strcpy()
 {
-    assert(global_assm);
-    assert(global_assm->commands_file);
-    assert(global_assm->byte_code_write);
-    assert(global_assm->command);
-    assert(global_assm->labels);
+    assert(assm);
+    assert(assm->commands_file);
+    assert(assm->byte_code_write);
+    assert(assm->labels);
 
-    int arg = 0, number_command = 0;
     char jmp_arg[SIZE_LABEL] = {};
 
     assert(jmp_arg);
 
-    while (fscanf(global_assm->commands_file, "%s", global_assm->command) != EOF) //TODO use onegin!!!!!
+    int n = 1, checker = 0;
+
+    for (assm->index = 0; assm->index < assm->capacity; assm->index++)
     {
-        printf("command = %s\n", global_assm->command); //TODO Деффайны - это не круто!!!!
+        checker = 0;
 
-        COMPILATION_ARG("push", PUSH);
+        WriteCommand(assm);
 
-        COMPILATION_REGS("pushr", PUSHR); //TODO universial push
+        COMPILATION("push", PUSH); //TODO # создает строку из названия переменной (сделать вместо двух аргументов один)
 
-        COMPILATION_JMP("jmp", JUMP); //TODO more jumps
+        COMPILATION("pushr", PUSHR); //TODO universial push
 
-        COMPILATION_JMP("jb", JB);
+        COMPILATION("jmp", JUMP); //TODO more jumps
 
-        COMPILATION_JMP("jbe", JBE);
+        COMPILATION("jb", JB);
+
+        COMPILATION("jbe", JBE);
 
         COMPILATION("sub", SUB);
 
@@ -46,38 +48,30 @@ void CompileCommands(struct assm* global_assm, struct stat* st_file) //TODO read
 
         COMPILATION("hlt", HLT);
 
-        LabelAssignment(global_assm, number_command); //TODO вынести из command
+        if (checker == 0)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                printf("%c", assm->command[j]);
+            }
+
+            printf("\n");
+
+            assert(assm);
+
+            LabelAssignment(assm); //TODO вынести из command
+        }
+
+        free(assm->command);
     }
 }
 
-void LabelAssignment(struct assm* global_assm, int number_command) //TODO is not commant is string
+int DefineReg(struct assembler* assm)
 {
-    if (strchr((const char*)global_assm->command, ':') != NULL)
-    {
-        global_assm->labels[global_assm->size_label_arr].addr = number_command;
-        global_assm->labels[global_assm->size_label_arr].label = global_assm->command;
-
-        printf("ip_mark = %d, addr = %d, mark = %s\n",
-                global_assm->size_label_arr, global_assm->labels[global_assm->size_label_arr].addr,
-                global_assm->labels[global_assm->size_label_arr].label);
-
-        number_command++;
-        global_assm->size_label_arr++;
-    }
-}
-
-int DefineReg(struct assm* global_assm)
-{
-    assert(global_assm);
-    assert(global_assm->commands_file);
-    assert(global_assm->byte_code_write);
-    assert(global_assm->command);
-
-    char reg[SIZE_REG] = {};
-
-    assert(reg);
-
-    fscanf(global_assm->commands_file, "%s", reg);
+    assert(assm);
+    assert(assm->commands_file);
+    assert(assm->byte_code_write);
+    assert(assm->command);
 
     REGS("ax", AX);
 
@@ -87,6 +81,95 @@ int DefineReg(struct assm* global_assm)
 
     REGS("dx", DX);
 
-    printf("\n<<<<<<WRONG REGISTER IN COMMANDS FILE!>>>>>>\n\n");
-    return - 153;
+    return INT_ARG;
+}
+
+void CheckArg(struct assembler* assm)
+{
+    assert(assm);
+    assert(assm->commands_file);
+    assert(assm->byte_code_write);
+
+    if (assm->last_command == PUSH)
+    {
+        while ((assm->input_code[assm->index] != '\n') && (assm->input_code[assm->index] != '\r'))
+        {
+            SkipSpaces(assm, assm->input_code[assm->index], ' '); //аски код пробела
+
+            fprintf(assm->byte_code_write, "%c", assm->input_code[assm->index]);
+
+            assm->index++;
+
+            //UniversalPush(assm);
+        }
+    }
+
+    else if ((assm->last_command == JUMP) || (assm->last_command == JBE) || (assm->last_command == JB))
+    {
+        free(assm->command);
+
+        assm->index++;
+
+        WriteCommand(assm);
+
+        FindLabel(assm);
+
+        printf("<<<<<<<<<<<<<<<<<<<3\n");
+    }
+
+    fprintf(assm->byte_code_write, "\n");
+}
+
+void UniversalPush(struct assembler* assm)
+{
+    assert(assm);
+    assert(assm->byte_code_write);
+    assert(assm->command);
+
+    if (DefineReg(assm) == INT_ARG)
+    {
+        fprintf(assm->byte_code_write, "%s", assm->command);
+    }
+
+    else
+    {
+        fprintf(assm->byte_code_write, "%d", DefineReg(assm));
+    }
+}
+
+void SkipSpaces(struct assembler* assm, int symbol0, int symbol1)
+{
+        assert(assm);
+
+        printf("SKIPSPACES\n\n%c - %d\n%c - %d \n", symbol0, symbol0, symbol1, symbol1);
+
+        while (symbol0 == symbol1)
+        {
+            assm->index++;
+
+            symbol0 = assm->input_code[assm->index];
+
+            printf("%c - %d\n", symbol0, symbol0);
+            //printf("buffer[%lu] = %c\n", akin->index_buf, symbol0);
+        }
+}
+
+void WriteCommand(struct assembler* assm)
+{
+    int i = 0;
+
+    assm->command = (char*) calloc(COMMAND_SIZE, sizeof(char));
+
+    assert(assm->command);
+
+    printf("\nI AM WRITING A COMMAND!\n\n");
+    while ((assm->input_code[assm->index] != '\n') && (assm->input_code[assm->index] != '\0') && (assm->input_code[assm->index] != ' ') && (assm->input_code[assm->index] != '\r')  && (assm->input_code[assm->index] != ':'))
+    {
+        assm->command[i] = assm->input_code[assm->index];
+
+        printf("%c - %d\n", assm->command[i], assm->command[i]);
+
+        i++;
+        assm->index++;
+    }
 }

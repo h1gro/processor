@@ -1,12 +1,7 @@
-#ifndef LABEL_TABLE
-#define LABEL_TABLE
+#ifndef _LABEL_TABLE_
+#define _LABEL_TABLE_
 
-const int INVALID_ADDR = - 1;
-const int NULL_ADDR    = 0;
-
-void LabelsCtor(struct assm* global_assm);
-void LabelsDtor(struct assm* global_assm);
-void FindMark(struct assm* global_assm, int command);
-void FillingStructLabels(struct assm* global_assm, int poison);
+void FindLabel       (struct assembler* assm);
+void LabelAssignment (struct assembler* assm);
 
 #endif

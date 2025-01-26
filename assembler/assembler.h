@@ -1,28 +1,32 @@
-#ifndef ASSEMBLER
-#define ASSEMBLER
+#ifndef _ASSEMBLER_
+#define _ASSEMBLER_
 
 const int MAX_SIZE_COM    = 15;
 const int NUMBER_OF_MARKS = 10;
 
 struct label
 {
-    int addr;
+    int   addr;
     char* label;
 };
 
-struct assm
+struct assembler
 {
     FILE* commands_file;
     FILE* byte_code_write;
     char* command;
-    int size_label_arr;
-    struct label labels[NUMBER_OF_MARKS];
-    char* buffer;
-    size_t buffer_size;
+    char* input_code;
+    int   index;
+    int   capacity;
+    int   size_label_arr;
+    int   last_command;
+    int   num_elem_file;
+    label labels[NUMBER_OF_MARKS];
 };
 
-int DefineReg(struct assm* global_assm);
-void CompileCommands(struct assm* global_assm, struct stat* st_file);
-void InitStat(struct stat* st_file);
+int  DefineReg       (struct assembler* assm);
+
+void InitStat        (struct stat* st_file);
+void CompileCommands (struct assembler* assm);
 
 #endif
