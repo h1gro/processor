@@ -1,0 +1,3 @@
+push 55
+push ax
+hlt
