@@ -1,3 +1,4 @@
 push 55
-push ax
+push 34
+add
 hlt
