@@ -2,11 +2,8 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
-#include "../stack/global.h"
+#include "../lib/stack/global.h"
 #include "processor.h"
-#include "ReadByteFile.h"
-#include "C_Dtors.h"
-#include "LaunchCommand.h"
 
 int main()
 {

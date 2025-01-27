@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
-#include "../stack/global.h"
+#include "../lib/stack/global.h"
 #include "processor.h"
-#include "C_Dtors.h"
-#include "ReadByteFile.h"
 
 void SpuCtor(struct spu_t* spu, struct stat* commands)
 {

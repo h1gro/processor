@@ -20,8 +20,8 @@ ReadByteFile.o: ReadByteFile.cpp
 C_Dtors.o: C_Dtors.cpp
 	g++ -c $(flag) C_Dtors.cpp
 
-stackfuncs.o: ../stack/stackfuncs.cpp
-	g++ -c $(flag) ../stack/stackfuncs.cpp
+stackfuncs.o: ../lib/stack/stackfuncs.cpp
+	g++ -c $(flag) ../lib/stack/stackfuncs.cpp
 
 LaunchCommand.o: LaunchCommand.cpp
 	g++ -c $(flag) LaunchCommand.cpp

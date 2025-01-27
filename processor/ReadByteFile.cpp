@@ -3,10 +3,8 @@
 #include <assert.h>
 #include <sys/stat.h>
 
-#include "../stack/global.h"
+#include "../lib/stack/global.h"
 #include "processor.h"
-#include "ReadByteFile.h"
-#include "C_Dtors.h"
 
 void ReadByteFile(struct spu_t* spu)
 {
@@ -14,7 +12,7 @@ void ReadByteFile(struct spu_t* spu)
     assert(spu->registers);
     assert(spu->code);
 
-    FILE *byte_code_read = fopen(BYTE_CODE_R, "rb");
+    FILE* byte_code_read = fopen(BYTE_CODE_R, "rb");
 
     assert(byte_code_read);
 
