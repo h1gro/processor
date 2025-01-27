@@ -63,10 +63,10 @@ void StackPush(struct stack_t *stk, stackelem_t elem)
 
     fprintf(stk->output, "\n\nfirst DUMP\n");
 
-    StackDump(stk, __func__, __FILE__, __LINE__, PUSH);
+    StackDump(stk, __func__, __FILE__, __LINE__, STACK_PUSH);
 
     fprintf(stk->output, "push elem = %d\n", elem);
-    int pop_or_push = PUSH;
+    int pop_or_push = STACK_PUSH;
     ResizeIf(stk, pop_or_push);
 
     stk->data[stk->size] = elem;
@@ -76,7 +76,7 @@ void StackPush(struct stack_t *stk, stackelem_t elem)
     assert(stk->size);
 
     fprintf(stk->output, "\n\nsecond DUMP\n");
-    StackDump(stk, __func__, __FILE__, __LINE__, PUSH);
+    StackDump(stk, __func__, __FILE__, __LINE__, STACK_PUSH);
 
     STACK_CHECK(stk);
 
@@ -88,13 +88,13 @@ stackelem_t StackPop(struct stack_t *stk)
 
     fprintf(stk->output, "\n\nfirst POP\n");
 
-    StackDump(stk, __func__, __FILE__, __LINE__, POP);
+    StackDump(stk, __func__, __FILE__, __LINE__, STACK_POP);
 
     fprintf(stk->output, "pop elem = %d\n", stk->data[stk->size - 1]);
     stackelem_t discared_elem = stk->data[stk->size - 1];
     stk->data[stk->size - 1] = POISON;
 
-    int pop_or_push = POP;
+    int pop_or_push = STACK_POP;
     ResizeIf(stk, pop_or_push);
 
     stk->size--;
@@ -103,15 +103,14 @@ stackelem_t StackPop(struct stack_t *stk)
     printf("discared_elem = %d\n", discared_elem);
     fprintf(stk->output, "\n\nsecond POP\n");
 
-    StackDump(stk, __func__, __FILE__, __LINE__, POP);
+    StackDump(stk, __func__, __FILE__, __LINE__, STACK_POP);
     fprintf(stk->output, "discared_elem = %d\n", discared_elem);
     return discared_elem;
 }
 
 void ResizeIf(struct stack_t *stk, int pop_or_push)
 {
-    //printf("pop_or_push = %d\n", pop_or_push);
-    if (pop_or_push == PUSH && stk->size == stk->capacity)
+    if (pop_or_push == STACK_PUSH && stk->size == stk->capacity)
     {
         stk->data[stk->capacity] = POISON;
         stk->capacity = stk->capacity * CAPAC_RESIZE;
@@ -120,34 +119,30 @@ void ResizeIf(struct stack_t *stk, int pop_or_push)
         FillingDataPoison(stk->data + stk->size, stk->capacity - stk->size);
 
         stk->data[stk->capacity] = CANARY;
-
-        //printf("push cap = %d\n", stk->capacity);
     }
 
-    if (pop_or_push == POP && stk->size * CAPAC_RESIZE + CAPAC_SHIFT < stk->capacity)
+    if (pop_or_push == STACK_POP && stk->size * CAPAC_RESIZE + CAPAC_SHIFT < stk->capacity)
     {
         stk->capacity = stk->capacity / CAPAC_RESIZE;
 
         stk->data = (stackelem_t*) realloc(stk->data - NUM_CANARIES_IN_LEFT, (size_t)(stk->capacity + NUM_CANARIES_BUF) * sizeof(stackelem_t)) + NUM_CANARIES_IN_LEFT;
 
         stk->data[stk->capacity] = CANARY;
-
-        //printf("pop cap = %d\n", stk->capacity);
     }
 }
 int CheckForErrors(struct stack_t *stk)
 {
-    //printf("size = %d\n", stk->size);
     #ifdef LEVEL_OF_PROTECTION
+
         assert(stk);
         assert(stk->data);
         assert(stk->capacity);
         assert(stk->size >= 0);
+
         assert(fabs(stk->data[-1] - CANARY) < EPSILON);
         assert(fabs(stk->data[stk->capacity] - CANARY) < EPSILON);
 
 
-        //printf("canary1 = %lg, canary2 = %lg\n", stk->canary1, stk->canary2);
         #ifdef DEBUG
             assert(fabs(stk->canary1 - CANARY) < EPSILON);
             assert(fabs(stk->canary2 - CANARY) < EPSILON);
@@ -270,8 +265,6 @@ void StackDump(struct stack_t *stk, const char* func, const char* file, int line
     }
 
     fprintf(stk->output, "\n");
-
-    //fclose(stk->output);
 }
 
 void StackErrorOutput(struct stack_t *stk)

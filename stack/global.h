@@ -1,5 +1,5 @@
-#ifndef IFDEF_CONST
-#define IFDEF_CONST
+#ifndef _IFDEF_CONST_
+#define _IFDEF_CONST_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,8 +53,8 @@ enum stack
 
 enum call_funcs
 {
-    PUSH        = 777,
-    POP         = 666,
+    STACK_PUSH  = 777,
+    STACK_POP   = 666,
     INFO_PRINT  = 555,
     ERROR_PRINT = 444,
     RUN         = 333
@@ -87,17 +87,17 @@ struct stack_t
 #endif
 };
 
-int CheckForErrors(struct stack_t *stk);
-int StackCheck(struct stack_t *stk, const char* file, int line, const char* func);
+int CheckForErrors     (struct stack_t *stk);
+int StackCheck         (struct stack_t *stk, const char* file, int line, const char* func);
 
-void StackCtor(struct stack_t *stk);
-void StackDtor(struct stack_t *stk);
-void FillingDataPoison(stackelem_t *data, int num_el_poison);
-void StackPush(struct stack_t *stk, stackelem_t elem);
-void ResizeIf(struct stack_t *stk, int is_pop_or_push);
-void StackErrorOutput(struct stack_t *stk);
-void StackDump(struct stack_t *stk, const char* func, const char* file, int line, int dump_call);
+void StackCtor         (struct stack_t *stk);
+void StackDtor         (struct stack_t *stk);
+void StackErrorOutput  (struct stack_t *stk);
+void StackPush         (struct stack_t *stk, stackelem_t elem);
+void ResizeIf          (struct stack_t *stk, int is_pop_or_push);
+void StackDump         (struct stack_t *stk, const char* func, const char* file, int line, int dump_call);
+void FillingDataPoison (stackelem_t *data, int num_el_poison);
 
-stackelem_t StackPop(struct stack_t *stk);
+stackelem_t StackPop   (struct stack_t *stk);
 
 #endif
