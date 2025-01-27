@@ -1,0 +1,127 @@
+
+
+first DUMP
+size 0
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = -153 (POISON)
+data [1] = -153 (POISON)
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+push elem = 55
+
+
+second DUMP
+size 1
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 55
+data [1] = -153 (POISON)
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+
+
+first DUMP
+size 1
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 55
+data [1] = -153 (POISON)
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+push elem = 34
+
+
+second DUMP
+size 2
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 55
+data [1] = 34
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+
+
+first POP
+size 2
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 55
+data [1] = 34
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+pop elem = 34
+
+
+second POP
+size 1
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 55
+data [1] = -153 (POISON)
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+discared_elem = 34
+
+
+first POP
+size 1
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 55
+data [1] = -153 (POISON)
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+pop elem = 55
+
+
+second POP
+size 0
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = -153 (POISON)
+data [1] = -153 (POISON)
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+discared_elem = 55
+
+
+first DUMP
+size 0
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = -153 (POISON)
+data [1] = -153 (POISON)
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
+push elem = 89
+
+
+second DUMP
+size 1
+capacity 3
+ Data:
+data [-1] = 531 (CANARY)
+data [0] = 89
+data [1] = -153 (POISON)
+data [2] = -153 (POISON)
+data [3] = 531 (CANARY)
+
