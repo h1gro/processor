@@ -3,9 +3,6 @@
 #include <sys/stat.h>
 
 #include "assembler.h"
-#include "label_table.h"
-#include "CompileCommands.h"
-#include "StructAssmC_Dtor.h"
 
 int main()
 {
@@ -38,17 +35,3 @@ int main()
 //6) memory push [1] and 6.5) memory regs push [rax]
 //7) Sdl and sfml
 
-// void CreateBuf(struct file_t* file, struct stat* st_file)
-// {
-//     char* buffer = (char*) calloc((size_t)(st_file->st_size), sizeof(char));
-//
-//     assert(buffer);
-//
-//     fgets(file->command, (int)(st_file->st_size), file->commands_file);
-//
-//     printf("commands: %s", file->command);
-//
-//     assert(file->command);
-//
-//     strcpy(buffer, (const char*)file->command);
-// }

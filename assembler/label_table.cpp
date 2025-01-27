@@ -3,8 +3,6 @@
 #include <string.h>
 
 #include "assembler.h"
-#include "label_table.h"
-#include "StructAssmC_Dtor.h"
 
 void FindLabel(struct assembler* assm)
 {

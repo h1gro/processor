@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include "assembler.h"
-#include "StructAssmC_Dtor.h"
 
 static const char* INPUT_COMMANDS = "commands.txt";
 static const char* BYTE_CODE_W = "../byte_code.txt";
