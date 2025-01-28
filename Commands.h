@@ -33,11 +33,22 @@ enum regs
 
 enum encodings
 {
-    CMD_STACK_PUSH = 0,
-    CMD_REG_PUSH   = 1,
+    CMD_STACK_PUSH   = 0,
+    CMD_REG_PUSH     = 1,
+    CMD_REG_TO_STACK = 2,
 };
 
-/*machine code for push in 3 arguments:
-[1] [0 or 1] [(int arg - it's number) or (-1, -2, -3, -4 - it's registers)]*/
+/*              Encoding Instrations:
+machine code for push in 2 arguments:
+[1] [number]
+example: push -245 --> 1 -245
+
+machine code for push in 3 arguments:
+[1] [0 or 1 (enum)] [(int arg - it's number) or (-1, -2, -3, -4 - it's registers)]
+example: push bx --> 1 1 -1
+
+machine code for push in 4 arguments:
+[1] [0 or 1 or 2 (enum)] [reg -1, -2, -3, -4] [oper add, sub, ...] [number]
+example: push cx-4 --> 1 2 -3 2 4*/
 
 #endif
