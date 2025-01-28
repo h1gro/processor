@@ -24,13 +24,20 @@ while(0)
 
 const int MAX_SIZE_COM    = 15;
 const int NUMBER_OF_MARKS = 10;
-const int INT_ARG         = 100;
+const int NO_REGS         = 69;
 const int NUM_REGS        = 4;
 const int SIZE_REG        = 4;  // 2 symbols of register + \n + \r
 const int SIZE_LABEL      = 10;
 const int COMMAND_SIZE    = 10;
 const int INVALID_ADDR    = -1;
 const int NULL_ADDR       = 0;
+
+enum push_args
+{
+    INT_ARG      = 100,
+    OPER_ARG     = 200,
+    NOT_OPER_ARG = 300,
+};
 
 enum funcs
 {
@@ -60,12 +67,13 @@ struct assembler
 };
 
 int  DefineReg           (struct assembler* assm);
+int CheckRegs            (struct assembler* assm);
+int WriteCommand         (struct assembler* assm);
 
 void InitStat            (struct stat* st_file);
 void CompileCommands     (struct assembler* assm);
 void CheckArg            (struct assembler* assm);
 void UniversalPush       (struct assembler* assm);
-void WriteCommand        (struct assembler* assm);
 void LabelsCtor          (struct assembler* assm);
 void LabelsDtor          (struct assembler* assm);
 void StructAssmDtor      (struct assembler* assm);

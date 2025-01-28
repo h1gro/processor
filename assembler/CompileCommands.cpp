@@ -70,17 +70,22 @@ int DefineReg(struct assembler* assm)
     assert(assm->commands_file);
     assert(assm->byte_code_write);
 
-    WriteCommand(assm);
+    if (WriteCommand(assm) == OPER_ARG)
+    {
+        return OPER_ARG;
+    }
 
-    REGS(AX);
+    int check_regs_return = CheckRegs(assm);
 
-    REGS(BX);
+    if (check_regs_return == NO_REGS)
+    {
+        return INT_ARG;
+    }
 
-    REGS(CX);
-
-    REGS(DX);
-
-    return INT_ARG;
+    else
+    {
+        return check_regs_return;
+    }
 }
 
 void CheckArg(struct assembler* assm)
@@ -132,6 +137,55 @@ void UniversalPush(struct assembler* assm)
         }
     }
 
+    else if (reg_return == OPER_ARG)
+    {
+        int check_regs_return = CheckRegs(assm);
+
+        fprintf(assm->byte_code_write, "%d %d ", CMD_REG_TO_STACK, check_regs_return);
+
+        switch (assm->input_code[assm->index])
+        {
+            case '+':
+            {
+                fprintf(assm->byte_code_write, "%d ", ADD);
+                break;
+            }
+
+            case '-':
+            {
+                fprintf(assm->byte_code_write, "%d ", SUB);
+                break;
+            }
+
+            case '*':
+            {
+                fprintf(assm->byte_code_write, "%d ", MUL);
+                break;
+            }
+
+            case '/':
+            {
+                fprintf(assm->byte_code_write, "%d ", DIV);
+                break;
+            }
+        }
+
+        free(assm->command);
+
+        assm->index++;
+
+        WriteCommand(assm);
+
+        printf("\n\n");
+        for (int i = 0; i < assm->cmd_size; i++)
+        {
+            printf("%c", assm->command[i]);
+            fprintf(assm->byte_code_write, "%c", assm->command[i]);
+        }
+        printf("\n\n");
+
+    }
+
     else
     {
         // printf("\n\nDefineReg return = %d\n\n", reg_return);
@@ -158,16 +212,22 @@ void SkipSpaces(struct assembler* assm, int symbol0, int symbol1)
         }
 }
 
-void WriteCommand(struct assembler* assm)
+int WriteCommand(struct assembler* assm)
 {
     assm->command = (char*) calloc(COMMAND_SIZE, sizeof(char));
 
     assert(assm->command);
 
-    //printf("\nI AM WRITING A COMMAND!\n\n");
+    assm->cmd_size = 0;
+    printf("\nI AM WRITING A COMMAND!\n\n");
 
     while ((assm->input_code[assm->index] != '\n') && (assm->input_code[assm->index] != '\0') && (assm->input_code[assm->index] != ' ') && (assm->input_code[assm->index] != '\r')  && (assm->input_code[assm->index] != ':'))
     {
+        if ((assm->input_code[assm->index] == '+') || (assm->input_code[assm->index] == '-') || (assm->input_code[assm->index] == '*') || (assm->input_code[assm->index] == '/'))
+        {
+            return OPER_ARG;
+        }
+
         assm->command[assm->cmd_size] = assm->input_code[assm->index];
 
         printf("%c - %d\n", assm->command[assm->cmd_size], assm->command[assm->cmd_size]);
@@ -175,4 +235,21 @@ void WriteCommand(struct assembler* assm)
         assm->cmd_size++;
         assm->index++;
     }
+
+    return NOT_OPER_ARG;
+}
+
+int CheckRegs(struct assembler* assm)
+{
+    assert(assm);
+
+    REGS(AX);
+
+    REGS(BX);
+
+    REGS(CX);
+
+    REGS(DX);
+
+    return NO_REGS;
 }
