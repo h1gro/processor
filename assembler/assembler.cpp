@@ -12,9 +12,9 @@ int main()
 
     InitStat(&st_file);
 
-    StructAssmCtor(&assm, &st_file); //TODO отдельный буффер для кода
+    StructAssmCtor(&assm, &st_file);
 
-    LabelsCtor(&assm); //TODO use Onegin + skip_spaces()
+    LabelsCtor(&assm);
 
     CompileCommands(&assm); //TODO двухпроходная компиляция не работает
 
@@ -26,10 +26,6 @@ int main()
 }
 
 //TODO
-//0) Theory
-//1) vsl or linux
-//2) разбей всё на папки
-//3) todo
 //4) label :1 not use label into stack
 //5) registers - use bytecode
 //6) memory push [1] and 6.5) memory regs push [rax]

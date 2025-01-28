@@ -45,6 +45,8 @@ void CompileCommands(struct assembler* assm)
 
         COMPILATION(DUMP);
 
+        COMPILATION(SSQRT);
+
         COMPILATION(HLT);
 
         for (int j = 0; j < 5; j++)
@@ -122,6 +124,8 @@ void UniversalPush(struct assembler* assm)
 
     if (reg_return == INT_ARG)
     {
+        fprintf(assm->byte_code_write, "%d ", CMD_STACK_PUSH);
+
         for (int i = 0; i < assm->cmd_size; i++)
         {
             fprintf(assm->byte_code_write, "%c", assm->command[i]);
@@ -131,7 +135,7 @@ void UniversalPush(struct assembler* assm)
     else
     {
         // printf("\n\nDefineReg return = %d\n\n", reg_return);
-        fprintf(assm->byte_code_write, "%d", reg_return);
+        fprintf(assm->byte_code_write, "%d %d", CMD_REG_PUSH, reg_return);
     }
 
     free(assm->command);

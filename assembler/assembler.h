@@ -1,6 +1,8 @@
 #ifndef _ASSEMBLER_
 #define _ASSEMBLER_
 
+#include "../Commands.h"
+
 #define COMPILATION(COMMAND_ENUM)                                                         \
 {                                                                                         \
     if (strcasecmp((const char*)assm->command, #COMMAND_ENUM) == 0)                       \
