@@ -22,7 +22,7 @@
     #define INIT(canary, name)
 #endif
 
-typedef int stackelem_t;
+typedef double stackelem_t;
 
 const stackelem_t POISON  = -153;
 const stackelem_t CANARY  = 531;

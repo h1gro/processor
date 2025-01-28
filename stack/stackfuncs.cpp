@@ -130,6 +130,7 @@ void ResizeIf(struct stack_t *stk, int pop_or_push)
         stk->data[stk->capacity] = CANARY;
     }
 }
+
 int CheckForErrors(struct stack_t *stk)
 {
     #ifdef LEVEL_OF_PROTECTION
@@ -252,15 +253,15 @@ void StackDump(struct stack_t *stk, const char* func, const char* file, int line
     {
         if (fabs(stk->data[i] - POISON) < EPSILON)
         {
-            fprintf(stk->output, "data [%d] = %d (POISON)\n", i, (stk->data)[i]);
+            fprintf(stk->output, "data [%d] = %lg (POISON)\n", i, (stk->data)[i]);
         }
         else if (fabs(stk->data[i] - CANARY) < EPSILON)
         {
-            fprintf(stk->output, "data [%d] = %d (CANARY)\n", i, (stk->data)[i]);
+            fprintf(stk->output, "data [%d] = %lg (CANARY)\n", i, (stk->data)[i]);
         }
         else
         {
-            fprintf(stk->output, "data [%d] = %d\n", i, (stk->data)[i]);
+            fprintf(stk->output, "data [%d] = %lg\n", i, (stk->data)[i]);
         }
     }
 
