@@ -21,10 +21,24 @@ do{                                                                            \
     if (reg == NAME_REGISTER)                                                  \
     {                                                                          \
     data[NAME_REGISTER * (- 1) - 1] += StackPop(&spu->stk);                    \
-    printf("data[%s]: %d\n", #NAME_REGISTER, data[NAME_REGISTER * (- 1) - 1]); \
+    printf("data[%s]: %lg\n", #NAME_REGISTER, data[NAME_REGISTER * (- 1) - 1]); \
     return NAME_REGISTER;                                                      \
     }                                                                          \
 }                                                                              \
+while(0)
+
+#define WHAT_IS_REG(COMMAND_ENUM)             \
+do{                                           \
+    ip_register = COMMAND_ENUM * (- 1) - 1;        \
+}                     \
+while(0)
+
+#define WHAT_IS_OPER(OPERATOR)             \
+do{                                           \
+    spu->ip++;          \
+    printf("\nGEGEGE register = %lg ++++ num = %d\n\n", spu->registers[ip_register], spu->code[spu->ip]);\
+    StackPush(&spu->stk, spu->registers[ip_register] OPERATOR spu->code[spu->ip]);        \
+}                     \
 while(0)
 
 static const char* BYTE_CODE_R = "../byte_code.txt";

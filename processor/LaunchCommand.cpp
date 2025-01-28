@@ -11,6 +11,10 @@ void LaunchCommand(struct spu_t* spu)
     assert(spu->registers);
     assert(spu->code_elems);
 
+    int id_file_open = 0;
+
+    FILE* equation = NULL;
+
     for(spu->ip = 0; spu->ip < spu->code_elems; spu->ip++)
     {
         double arg1 = 0, arg2 = 0;
@@ -28,8 +32,6 @@ void LaunchCommand(struct spu_t* spu)
             case PUSH:
             {
                 UniversalPush(spu);
-
-                spu->ip += 2;
                 break;
             }
 
@@ -86,7 +88,15 @@ void LaunchCommand(struct spu_t* spu)
 
             case SSQRT:
             {
-                SolveSquare(spu);
+                if (!id_file_open)
+                {
+                    equation = fopen(SQUARE_EQUATION, "w+");
+                    assert(equation);
+
+                    id_file_open = 1;
+                }
+
+                SolveSquare(spu, equation);
                 break;
             }
 
@@ -112,6 +122,11 @@ void LaunchCommand(struct spu_t* spu)
         }
     }
 
+    if (equation)
+    {
+        fclose(equation);
+    }
+
     printf("ax = %lg, bx = %lg, cx = %lg, dx = %lg\n", spu->registers[0], spu->registers[1], spu->registers[2], spu->registers[3]);
 
     return;
@@ -121,11 +136,15 @@ void UniversalPush(struct spu_t* spu)
 {
     int arg1 = 0;
 
-    int push_code = spu->code[spu->ip + CMD_SHIFT];
+    spu->ip++;
+
+    int push_code = spu->code[spu->ip];
 
     if (push_code == CMD_STACK_PUSH)
     {
-        arg1 = spu->code[spu->ip + ARG_SHIFT];
+        spu->ip++;
+
+        arg1 = spu->code[spu->ip];
 
         printf("arg1 = %d\n", arg1);
 
@@ -134,11 +153,83 @@ void UniversalPush(struct spu_t* spu)
 
     else if (push_code == CMD_REG_PUSH)
     {
-        int reg = spu->code[spu->ip + ARG_SHIFT];
+        spu->ip++;
+
+        int reg = spu->code[spu->ip];
 
         printf("register = %d\n", reg);
 
         PushRegister(spu, spu->registers, reg);
+    }
+
+    else if (push_code == CMD_REG_TO_STACK)
+    {
+        int ip_register = 0;
+
+        spu->ip++;
+
+        printf("\nMY HAHAH = %d\n\n", spu->code[spu->ip]);
+
+        switch(spu->code[spu->ip])
+        {
+            case AX:
+            {
+                WHAT_IS_REG(AX);
+                break;
+            }
+
+            case BX:
+            {
+                WHAT_IS_REG(BX);
+                break;
+            }
+
+            case CX:
+            {
+                WHAT_IS_REG(CX);
+                break;
+            }
+
+            case DX:
+            {
+                WHAT_IS_REG(DX);
+                break;
+            }
+
+            default:    printf("\n<<<<<<WRONG REGISTER!>>>>>>\n\n");
+        }
+
+        printf("\nIP_REGISTER1 = %d, what[reg] = %lg\n\n", ip_register, spu->registers[ip_register]);
+        spu->ip++;
+
+        switch(spu->code[spu->ip])
+        {
+            case ADD:
+            {
+                WHAT_IS_OPER(+);
+                break;
+            }
+
+            case SUB:
+            {
+                WHAT_IS_OPER(-);
+                break;
+            }
+
+            case MUL:
+            {
+                WHAT_IS_OPER(*);
+                break;
+            }
+
+            case DIV:
+            {
+                WHAT_IS_OPER(/);
+                break;
+            }
+
+            default:    printf("\n<<<<<<WRONG OPERATOR!>>>>>>\n\n");
+        }
     }
 
     else
