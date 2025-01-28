@@ -3,7 +3,7 @@
 
 #include "../lib/stack/global.h"
 #include "processor.h"
-#include "../Commands.h"
+#include "TasksFunctions.h"
 
 void LaunchCommand(struct spu_t* spu)
 {
@@ -13,7 +13,7 @@ void LaunchCommand(struct spu_t* spu)
 
     for(spu->ip = 0; spu->ip < spu->code_elems; spu->ip++)
     {
-        int arg1 = 0, arg2 = 0;
+        double arg1 = 0, arg2 = 0;
 
         printf("code[i] = %d\n", spu->code[spu->ip]);
         printf("code_elems = %d\n", spu->code_elems);
@@ -21,27 +21,15 @@ void LaunchCommand(struct spu_t* spu)
 
         assert(spu->ip >= 0);
 
-        printf("%d %d\n", spu->code[spu->ip], spu->ip);
+        printf("\n%d %d\n", spu->code[spu->ip], spu->ip);
 
         switch(spu->code[spu->ip])
         {
             case PUSH:
             {
-                arg1 = spu->code[spu->ip + COMMAND_ARGS]; //TODO сделать общий enum
-                //printf("arg1 = %d\n", arg1);
-                StackPush(&spu->stk, arg1);
+                UniversalPush(spu);
 
-                spu->ip++;
-                break;
-            }
-
-            case PUSHR:
-            {
-                arg1 = spu->code[spu->ip + COMMAND_ARGS];
-                printf("register = %d\n", arg1);
-                PushRegister(spu->registers, arg1);
-
-                spu->ip++;
+                spu->ip += 2;
                 break;
             }
 
@@ -92,13 +80,19 @@ void LaunchCommand(struct spu_t* spu)
 
             case OUT:
             {
-                printf("%d", StackPop(&spu->stk));
+                printf("%lg", StackPop(&spu->stk));
+                break;
+            }
+
+            case SSQRT:
+            {
+                SolveSquare(spu);
                 break;
             }
 
             case JUMP:
             {
-                if (spu) spu->ip = spu->code[spu->ip + COMMAND_ARGS] - COMMAND_SHIFT;
+                if (spu) spu->ip = spu->code[spu->ip + CMD_SHIFT] - CMD_SHIFT;
 
                 printf("ip after jmp = %d\n", spu->ip);
                 break;
@@ -118,12 +112,42 @@ void LaunchCommand(struct spu_t* spu)
         }
     }
 
-    printf("ax = %d, bx = %d, cx = %d, dx = %d\n", spu->registers[0], spu->registers[1], spu->registers[2], spu->registers[3]);
+    printf("ax = %lg, bx = %lg, cx = %lg, dx = %lg\n", spu->registers[0], spu->registers[1], spu->registers[2], spu->registers[3]);
 
     return;
 }
 
-void PushRegister(int* data, int reg)
+void UniversalPush(struct spu_t* spu)
+{
+    int arg1 = 0;
+
+    int push_code = spu->code[spu->ip + CMD_SHIFT];
+
+    if (push_code == CMD_STACK_PUSH)
+    {
+        arg1 = spu->code[spu->ip + ARG_SHIFT];
+
+        printf("arg1 = %d\n", arg1);
+
+        StackPush(&spu->stk, arg1);
+    }
+
+    else if (push_code == CMD_REG_PUSH)
+    {
+        int reg = spu->code[spu->ip + ARG_SHIFT];
+
+        printf("register = %d\n", reg);
+
+        PushRegister(spu, spu->registers, reg);
+    }
+
+    else
+    {
+        printf("\nUnknow command for push!\n\n");
+    }
+}
+
+regs PushRegister(struct spu_t* spu, double* data, int reg)
 {
     assert(data);
 
@@ -141,6 +165,4 @@ void PushRegister(int* data, int reg)
 
         default:    printf("\n<<<<<<WRONG REGISTER!>>>>>>\n\n");
     }
-
-    printf("here\n");
 }

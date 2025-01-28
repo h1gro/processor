@@ -11,7 +11,7 @@ void SpuCtor(struct spu_t* spu, struct stat* commands)
     assert(commands->st_size);
 
     spu->code      = (int*) calloc((size_t)(commands->st_size), sizeof(int));
-    spu->registers = (int*) calloc(NUM_REGISTERS, sizeof(int));
+    spu->registers = (double*) calloc(NUM_REGISTERS, sizeof(double));
 
     assert(spu->code);
     assert(spu->registers);

@@ -1,25 +1,30 @@
 #ifndef _PROCESSOR_
 #define _PROCESSOR_
 
-#define JUMP(COMPARISON_SIGN)                                        \
-do{                                                                  \
-    arg1 = StackPop(&spu->stk);                                      \
-    arg2 = StackPop(&spu->stk);                                      \
-    if (arg2 COMPARISON_SIGN arg1)                                   \
-    {                                                                \
-        spu->ip = spu->code[spu->ip + COMMAND_ARGS] - COMMAND_SHIFT; \
-    }                                                                \
-    spu->ip++;                                                       \
-    break;                                                           \
-}                                                                    \
+#include "../Commands.h"
+
+#define JUMP(COMPARISON_SIGN)                                                  \
+do{                                                                            \
+    arg1 = StackPop(&spu->stk);                                                \
+    arg2 = StackPop(&spu->stk);                                                \
+    if (arg2 COMPARISON_SIGN arg1)                                             \
+    {                                                                          \
+        spu->ip = spu->code[spu->ip + CMD_SHIFT] - CMD_SHIFT;                  \
+    }                                                                          \
+    spu->ip++;                                                                 \
+    break;                                                                     \
+}                                                                              \
 while(0)
 
-#define REGS(NAME_REGISTER)                                          \
-do{                                                                  \
-    data[NAME_REGISTER * (- 1) - 1]++;                               \
-    printf("data: %d\n", data[NAME_REGISTER * (- 1) - 1]);           \
-    break;                                                           \
-}                                                                    \
+#define REGS(NAME_REGISTER)                                                    \
+do{                                                                            \
+    if (reg == NAME_REGISTER)                                                  \
+    {                                                                          \
+    data[NAME_REGISTER * (- 1) - 1] += StackPop(&spu->stk);                    \
+    printf("data[%s]: %d\n", #NAME_REGISTER, data[NAME_REGISTER * (- 1) - 1]); \
+    return NAME_REGISTER;                                                      \
+    }                                                                          \
+}                                                                              \
 while(0)
 
 static const char* BYTE_CODE_R = "../byte_code.txt";
@@ -28,24 +33,26 @@ const int NUM_REGISTERS = 5;
 
 enum consts
 {
-    COMMAND_SHIFT = 1,
-    COMMAND_ARGS  = 1,
+    CMD_SHIFT  = 1,
+    ARG_SHIFT  = 2,
 };
 
 struct spu_t
 {
-    struct stack_t stk;
-    int ip;
-    int* registers;
-    int* code;
-    int code_elems;
+    stack_t stk;
+    int     ip;
+    double* registers;
+    int*    code;
+    int     code_elems;
 };
 
-void PushRegister  (int* data, int reg);
+regs PushRegister  (struct spu_t* spu, double* data, int reg);
+
 void InitStat      (struct stat* commands);
 void SpuDtor       (struct spu_t* spu);
 void ReadByteFile  (struct spu_t* spu);
 void LaunchCommand (struct spu_t* spu);
+void UniversalPush (struct spu_t* spu);
 void SpuCtor       (struct spu_t* spu, struct stat* commands);
 void FillingCode   (struct spu_t* spu, FILE* mach_code_read);
 
