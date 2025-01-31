@@ -98,6 +98,6 @@ void ResizeIf          (struct stack_t *stk, int is_pop_or_push);
 void StackDump         (struct stack_t *stk, const char* func, const char* file, int line, int dump_call);
 void FillingDataPoison (stackelem_t *data, int num_el_poison);
 
-stackelem_t StackPop   (struct stack_t *stk);
+stackelem_t StackPop   (struct stack_t *stk, const char* proc_func, int proc_line);
 
 #endif

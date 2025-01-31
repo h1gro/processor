@@ -61,11 +61,11 @@ void StackPush(struct stack_t *stk, stackelem_t elem)
     assert(stk->data);
     STACK_CHECK(stk);
 
-    fprintf(stk->output, "\n\nfirst DUMP\n");
+    //fprintf(stk->output, "\n\nfirst DUMP\n");
 
-    StackDump(stk, __func__, __FILE__, __LINE__, STACK_PUSH);
+    //StackDump(stk, __func__, __FILE__, __LINE__, STACK_PUSH);
 
-    fprintf(stk->output, "push elem = %d\n", elem);
+    fprintf(stk->output, "push elem = %lg\n", elem);
     int pop_or_push = STACK_PUSH;
     ResizeIf(stk, pop_or_push);
 
@@ -75,22 +75,24 @@ void StackPush(struct stack_t *stk, stackelem_t elem)
     assert(stk->capacity);
     assert(stk->size);
 
-    fprintf(stk->output, "\n\nsecond DUMP\n");
+    fprintf(stk->output, "second DUMP\n");
     StackDump(stk, __func__, __FILE__, __LINE__, STACK_PUSH);
 
     STACK_CHECK(stk);
 
 }
 
-stackelem_t StackPop(struct stack_t *stk)
+stackelem_t StackPop(struct stack_t *stk, const char* proc_func, int proc_line)
 {
+    printf("\n\nStack pop was called from %s:%d\n\n", proc_func, proc_line);
+
     STACK_CHECK(stk);
 
-    fprintf(stk->output, "\n\nfirst POP\n");
+    //fprintf(stk->output, "\n\nfirst POP\n");
 
-    StackDump(stk, __func__, __FILE__, __LINE__, STACK_POP);
+    //StackDump(stk, __func__, __FILE__, __LINE__, STACK_POP);
 
-    fprintf(stk->output, "pop elem = %d\n", stk->data[stk->size - 1]);
+    fprintf(stk->output, "pop elem = %lg\n", stk->data[stk->size - 1]);
     stackelem_t discared_elem = stk->data[stk->size - 1];
     stk->data[stk->size - 1] = POISON;
 
@@ -100,11 +102,11 @@ stackelem_t StackPop(struct stack_t *stk)
     stk->size--;
     STACK_CHECK(stk);
 
-    printf("discared_elem = %d\n", discared_elem);
-    fprintf(stk->output, "\n\nsecond POP\n");
+    printf("discared_elem = %lg\n", discared_elem);
+    fprintf(stk->output, "second POP\n");
 
     StackDump(stk, __func__, __FILE__, __LINE__, STACK_POP);
-    fprintf(stk->output, "discared_elem = %d\n", discared_elem);
+    fprintf(stk->output, "discared_elem = %lg\n\n", discared_elem);
     return discared_elem;
 }
 
@@ -140,7 +142,7 @@ int CheckForErrors(struct stack_t *stk)
         assert(stk->capacity);
         assert(stk->size >= 0);
 
-        assert(fabs(stk->data[-1] - CANARY) < EPSILON);
+        assert(fabs(stk->data[-1] - CANARY)            < EPSILON);
         assert(fabs(stk->data[stk->capacity] - CANARY) < EPSILON);
 
 
@@ -246,7 +248,7 @@ void StackDump(struct stack_t *stk, const char* func, const char* file, int line
     #endif
 
     fprintf(stk->output, "size %d\n"
-                    "capacity %d\n Data:\n",
+                    "capacity %d\nData:\n",
                     stk->size, stk->capacity);
 
     for (int i = -1; i < stk->capacity + NUM_CANARIES_IN_RIGHT; i++)
@@ -274,22 +276,31 @@ void StackErrorOutput(struct stack_t *stk)
     {
     case PUSH_ERROR:        fprintf(stk->output, "\n<<<<<<<<<Error in stackpush\n\n");
                             break;
+
     case CTOR_ERROR:        fprintf(stk->output, "\n<<<<<<<<<Error in ctor\n\n");
                             break;
+
     case STK_ERROR:         fprintf(stk->output, "\n<<<<<<<<<Error in struct\n\n");
                             break;
+
     case CAPACITY_ERROR:    fprintf(stk->output, "\n<<<<<<<<<Error in capacity\n\n");
                             break;
+
     case SIZE_ERROR:        fprintf(stk->output, "\n<<<<<<<<<Error in size\n\n");
                             break;
+
     case CANARY1_BUF_ERROR: fprintf(stk->output, "\n<<<<<<<<<Error first canary in buffer\n\n");
                             break;
+
     case CANARY2_BUF_ERROR: fprintf(stk->output, "\n<<<<<<<<<Error second canary in buffer\n\n");
                             break;
+
     case CANARY1_STR_ERROR: fprintf(stk->output, "\n<<<<<<<<<Error first canary in struct\n\n");
                             break;
+
     case CANARY2_STR_ERROR: fprintf(stk->output, "\n<<<<<<<<<Error second canary in strucr\n\n");
                             break;
+
     default:                fprintf(stk->output, "\n<<<<<<<<<Unknown error\n\n");
     }
 }
