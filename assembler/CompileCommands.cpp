@@ -282,7 +282,7 @@ int WriteCommand(struct assembler* assm)
 
     while ((assm->input_code[assm->index] != '\n') && (assm->input_code[assm->index] != '\0') && (assm->input_code[assm->index] != ' ') && (assm->input_code[assm->index] != '\r') && (assm->input_code[assm->index] != ':'))
     {
-        if ((assm->input_code[assm->index] == '+') || (assm->input_code[assm->index] == '-') || (assm->input_code[assm->index] == '*') || (assm->input_code[assm->index] == '/'))
+        if (((assm->input_code[assm->index] == '+') || (assm->input_code[assm->index] == '-') || (assm->input_code[assm->index] == '*') || (assm->input_code[assm->index] == '/')) && (assm->cmd_size != 0))
         {
             return OPER_ARG;
         }
