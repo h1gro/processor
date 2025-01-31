@@ -47,7 +47,11 @@ void CompileCommands(struct assembler* assm)
 
         COMPILATION(DUMP);
 
+        COMPILATION(SQRT);
+
         COMPILATION(SSQRT);
+
+        COMPILATION(CIRCLE);
 
         COMPILATION(HLT);
 
@@ -77,9 +81,16 @@ int DefineReg(struct assembler* assm)
     assert(assm->commands_file);
     assert(assm->byte_code_write);
 
-    if (WriteCommand(assm) == OPER_ARG)
+    int wrcmd = WriteCommand(assm);
+
+    if (wrcmd == OPER_ARG)
     {
         return OPER_ARG;
+    }
+
+    else if (wrcmd == MEMORY_PUSH)
+    {
+        return MEMORY_PUSH;
     }
 
     int check_regs_return = CheckRegs(assm);
@@ -141,81 +152,106 @@ void UniversalPush(struct assembler* assm)
 
     SkipSpaces(assm, assm->input_code[assm->index], ' ');
 
-    int reg_return = DefineReg(assm);
-
-    //printf("\n\nreg_return = %d\n", reg_return);
-
-    if (reg_return == INT_ARG)
+    if (assm->input_code[assm->index] == '[')
     {
-        fprintf(assm->byte_code_write, "%d ", CMD_STACK_PUSH);
+        fprintf(assm->byte_code_write, "%d ", CMD_MEMORY_PUSH);
+
+        assm->index++;
+
+        // UniversalPush(assm);
+        WriteCommand(assm);
 
         for (int i = 0; i < assm->cmd_size; i++)
         {
             fprintf(assm->byte_code_write, "%c", assm->command[i]);
-        }
-
-        assm->num_elem_file += 2;
-    }
-
-    else if (reg_return == OPER_ARG)
-    {
-        int check_regs_return = CheckRegs(assm);
-
-        fprintf(assm->byte_code_write, "%d %d ", CMD_REG_TO_STACK, check_regs_return);
-
-        switch (assm->input_code[assm->index])
-        {
-            case '+':
-            {
-                fprintf(assm->byte_code_write, "%d ", ADD);
-                break;
-            }
-
-            case '-':
-            {
-                fprintf(assm->byte_code_write, "%d ", SUB);
-                break;
-            }
-
-            case '*':
-            {
-                fprintf(assm->byte_code_write, "%d ", MUL);
-                break;
-            }
-
-            case '/':
-            {
-                fprintf(assm->byte_code_write, "%d ", DIV);
-                break;
-            }
         }
 
         free(assm->command);
-
-        assm->index++;
-        assm->num_elem_file += 4;
-
-        WriteCommand(assm);
-
-        printf("\n\n");
-        for (int i = 0; i < assm->cmd_size; i++)
-        {
-            printf("%c", assm->command[i]);
-            fprintf(assm->byte_code_write, "%c", assm->command[i]);
-        }
-        printf("\n\n");
-
     }
 
     else
     {
-        // printf("\n\nDefineReg return = %d\n\n", reg_return);
-        fprintf(assm->byte_code_write, "%d %d", CMD_REG_PUSH, reg_return);
+        int reg_return = DefineReg(assm);
 
-        assm->num_elem_file += 2;
+        //printf("\n\nreg_return = %d\n", reg_return);
+
+        if (reg_return == INT_ARG)
+        {
+            fprintf(assm->byte_code_write, "%d ", CMD_STACK_PUSH);
+
+            for (int i = 0; i < assm->cmd_size; i++)
+            {
+                fprintf(assm->byte_code_write, "%c", assm->command[i]);
+            }
+
+            assm->num_elem_file += 2;
+        }
+
+        else if (reg_return == OPER_ARG)
+        {
+            int check_regs_return = CheckRegs(assm);
+
+            fprintf(assm->byte_code_write, "%d %d ", CMD_REG_TO_STACK, check_regs_return);
+
+            switch (assm->input_code[assm->index])
+            {
+                case '+':
+                {
+                    fprintf(assm->byte_code_write, "%d ", ADD);
+                    break;
+                }
+
+                case '-':
+                {
+                    fprintf(assm->byte_code_write, "%d ", SUB);
+                    break;
+                }
+
+                case '*':
+                {
+                    fprintf(assm->byte_code_write, "%d ", MUL);
+                    break;
+                }
+
+                case '/':
+                {
+                    fprintf(assm->byte_code_write, "%d ", DIV);
+                    break;
+                }
+            }
+
+            free(assm->command);
+
+            assm->index++;
+            assm->num_elem_file += 4;
+
+            WriteCommand(assm);
+
+            printf("\n\n");
+            for (int i = 0; i < assm->cmd_size; i++)
+            {
+                printf("%c", assm->command[i]);
+                fprintf(assm->byte_code_write, "%c", assm->command[i]);
+            }
+            printf("\n\n");
+        }
+
+//         else if (reg_return == MEMORY_PUSH)
+//         {
+//
+//         }
+
+        else
+        {
+            // printf("\n\nDefineReg return = %d\n\n", reg_return);
+            fprintf(assm->byte_code_write, "%d %d", CMD_REG_PUSH, reg_return);
+
+            assm->num_elem_file += 2;
+        }
+
+        free(assm->command);
+
     }
-
-    free(assm->command);
 }
 
 void SkipSpaces(struct assembler* assm, int symbol0, int symbol1)
@@ -244,11 +280,16 @@ int WriteCommand(struct assembler* assm)
     assm->cmd_size = 0;
     printf("\nI AM WRITING A COMMAND!\n\n");
 
-    while ((assm->input_code[assm->index] != '\n') && (assm->input_code[assm->index] != '\0') && (assm->input_code[assm->index] != ' ') && (assm->input_code[assm->index] != '\r')  && (assm->input_code[assm->index] != ':'))
+    while ((assm->input_code[assm->index] != '\n') && (assm->input_code[assm->index] != '\0') && (assm->input_code[assm->index] != ' ') && (assm->input_code[assm->index] != '\r') && (assm->input_code[assm->index] != ':'))
     {
         if ((assm->input_code[assm->index] == '+') || (assm->input_code[assm->index] == '-') || (assm->input_code[assm->index] == '*') || (assm->input_code[assm->index] == '/'))
         {
             return OPER_ARG;
+        }
+
+        if ( (assm->input_code[assm->index] == ']'))
+        {
+            return MEMORY_PUSH;
         }
 
         assm->command[assm->cmd_size] = assm->input_code[assm->index];

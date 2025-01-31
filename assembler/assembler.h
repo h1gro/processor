@@ -37,6 +37,7 @@ enum push_args
     INT_ARG      = 100,
     OPER_ARG     = 200,
     NOT_OPER_ARG = 300,
+    MEMORY_PUSH  = 400,
 };
 
 enum funcs
