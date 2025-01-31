@@ -25,6 +25,8 @@ void CompileCommands(struct assembler* assm)
 
         COMPILATION(PUSH);
 
+        COMPILATION(POP);
+
         COMPILATION(JUMP);
 
         COMPILATION(JB);
@@ -48,6 +50,11 @@ void CompileCommands(struct assembler* assm)
         COMPILATION(SSQRT);
 
         COMPILATION(HLT);
+
+        // if (strcasecmp((const char*)assm->command, "factorial") == 0)
+        // {
+        //     FactorialCode(assm);
+        // }
 
         for (int j = 0; j < 5; j++)
         {
@@ -99,17 +106,28 @@ void CheckArg(struct assembler* assm)
         UniversalPush(assm);
     }
 
+    else if (assm->last_command == POP)
+    {
+        SkipSpaces(assm, assm->input_code[assm->index], ' ');
+
+        fprintf(assm->byte_code_write, "%d", DefineReg(assm));
+
+        free(assm->command);
+    }
+
     else if ((assm->last_command == JUMP) || (assm->last_command == JBE) || (assm->last_command == JB) || (assm->last_command == JA) || (assm->last_command == JAE))
     {
-        free(assm->command);
-
         assm->index++;
 
         WriteCommand(assm);
 
         FindLabel(assm);
 
+        free(assm->command);
+
         printf("<<<<<<<<<<<<<<<<<<<3\n");
+
+        assm->num_elem_file++;
     }
 
     fprintf(assm->byte_code_write, "\n");
@@ -135,6 +153,8 @@ void UniversalPush(struct assembler* assm)
         {
             fprintf(assm->byte_code_write, "%c", assm->command[i]);
         }
+
+        assm->num_elem_file += 2;
     }
 
     else if (reg_return == OPER_ARG)
@@ -173,6 +193,7 @@ void UniversalPush(struct assembler* assm)
         free(assm->command);
 
         assm->index++;
+        assm->num_elem_file += 4;
 
         WriteCommand(assm);
 
@@ -190,6 +211,8 @@ void UniversalPush(struct assembler* assm)
     {
         // printf("\n\nDefineReg return = %d\n\n", reg_return);
         fprintf(assm->byte_code_write, "%d %d", CMD_REG_PUSH, reg_return);
+
+        assm->num_elem_file += 2;
     }
 
     free(assm->command);
@@ -253,3 +276,31 @@ int CheckRegs(struct assembler* assm)
 
     return NO_REGS;
 }
+
+// void FactorialCode(struct assembler* assm)
+// {
+//     assert(assm);
+//     fprintf(assm->byte_code_write, "push ");
+//
+//     WriteCommand(assm);
+//
+//     for (int i = 0; i < assm->cmd_size; i++)
+//     {
+//         fprintf(assm->byte_code_write, "%d", assm->command[i]);
+//     }
+//
+//     fprintf(assm->byte_code_write, "\n1 1 -2\n1 0 1\n1 1 -3\n1 0 1\n"
+//                                    "1 1 -4\n1 2 -3 4 0\n
+// 1 2 -4 4 0
+// 5
+// 18 -4
+// 1 1 -4
+// 1 0 1
+// 1 1 -3
+// 1 0 1
+// 1 1 -1
+// 1 2 -1 4 0
+// 1 2 -2 4 0
+// 15 18");
+//     free(assm->command);
+// }
