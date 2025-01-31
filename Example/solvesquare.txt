@@ -1,0 +1,43 @@
+push 1
+push ax
+push 2
+push bx
+push 1
+push cx
+
+push bx+0
+push bx+0
+mul
+
+push ax+0
+push cx+0
+mul
+push 4
+mul
+
+sub
+
+sqrt
+
+push dx
+
+push 0
+push bx+0
+sub
+push dx+0
+add
+push 2
+push ax+0
+mul
+div
+
+push 0
+push bx+0
+sub
+push dx+0
+sub
+push 2
+push ax+0
+mul
+div
+hlt
