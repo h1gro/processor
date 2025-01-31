@@ -21,6 +21,7 @@ enum comands
     JA         = 15,
     JAE        = 16,
     SSQRT      = 17,
+    POP        = 18,
 };
 
 enum regs
@@ -52,3 +53,25 @@ machine code for push in 4 arguments:
 example: push cx-4 --> 1 2 -3 2 4*/
 
 #endif
+
+/* Calculate 7!
+push 7
+push bx
+push 1
+push cx
+push 1
+push dx
+next:
+push cx+0
+push dx+0
+mul
+pop dx
+push dx
+push 1
+push cx
+push 1
+push ax
+push ax+0
+push bx+0
+ja next
+hlt*/
