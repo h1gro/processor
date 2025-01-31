@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 
 #include "../lib/stack/global.h"
 #include "processor.h"
@@ -98,6 +99,14 @@ void LaunchCommand(struct spu_t* spu)
                 break;
             }
 
+            case SQRT:
+            {
+                arg1 = StackPop(&spu->stk, __func__, __LINE__);
+
+                StackPush(&spu->stk, sqrt(arg1));
+                break;
+            }
+
             case SSQRT:
             {
                 if (!id_file_open)
@@ -111,6 +120,13 @@ void LaunchCommand(struct spu_t* spu)
                 SolveSquare(spu, equation);
                 break;
             }
+
+//             case CIRCLE:
+//             {
+//                 int radius = StackPop(&spu->stk, __func__, __LINE__);
+//
+//                 DrowCircle(spu, radius);
+//             }
 
             case JUMP:
             {
@@ -127,6 +143,10 @@ void LaunchCommand(struct spu_t* spu)
             case JAE:  JUMP(<=);
 
             case JA:   JUMP(<);
+
+            case JE:   JUMP(==);
+
+            case JNE:  JUMP(!=);
 
             case HLT:  break;
 
@@ -220,6 +240,22 @@ void UniversalPush(struct spu_t* spu)
 
             default:    printf("\n<<<<<<WRONG OPERATOR!>>>>>>\n\n");
         }
+    }
+
+    else if (push_code == CMD_MEMORY_PUSH)
+    {
+        spu->ram[spu->ram_index] = spu->code[spu->ip + CMD_SHIFT];
+
+        spu->ram_index++;
+
+        printf("MEMORY\n");
+        for (int i = 0; i < spu->ram_index; i++)
+        {
+            printf("%d ", spu->ram[i]);
+        }
+        printf("\n");
+
+        spu->ip++;
     }
 
     else

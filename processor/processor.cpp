@@ -17,7 +17,6 @@ int main()
 
     LaunchCommand(&spu);
 
-    StackDtor(&spu.stk);
     SpuDtor(&spu);
     return 0;
 }

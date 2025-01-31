@@ -17,6 +17,7 @@ void SpuCtor(struct spu_t* spu, struct stat* commands)
     assert(spu->registers);
 
     StackCtor(&spu->stk);
+    RamCtor(spu);
 
     spu->ip = 0;
 }
@@ -27,8 +28,27 @@ void SpuDtor(struct spu_t* spu)
 
     spu->ip = 0;
 
+    StackDtor(&spu->stk);
+    RamDtor(spu);
+
     free(spu->code);
     free(spu->registers);
+}
+
+void RamCtor(struct spu_t* spu)
+{
+    assert(spu);
+
+    spu->ram = (int*) calloc(RAM_CAPASITY, sizeof(int));
+
+    assert(spu->ram);
+}
+
+void RamDtor(struct spu_t* spu)
+{
+    assert(spu);
+
+    free(spu->ram);
 }
 
 void InitStat(struct stat* commands)

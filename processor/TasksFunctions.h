@@ -2,7 +2,7 @@
 #define _TASKS_FUNCTIONS_
 
 static const char* SQUARE_EQUATION = "../square_equation.txt";
-
+static const char* PROC_CIRCLE     = "../Circle.txt";
 
 const double POISON_ROOT    = -153.153;
 const double INFINITY_ROOTS = 6892.363;
@@ -10,6 +10,7 @@ const double NO_ROOTS       = 513.513;
 
 
 int IsEqual              (double elem1, double elem2);
+//int DrowCircle           (struct spu_t* spu, int radius);
 
 double SolveLinear       (struct spu_t* spu);
 
