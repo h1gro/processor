@@ -9,6 +9,7 @@
 void SolveSquare(struct spu_t* spu, FILE* equation)
 {
     assert(spu);
+    assert(spu->registers);
     assert(equation);
 
     // D = b^2 - 4ac
@@ -55,6 +56,7 @@ void SolveSquare(struct spu_t* spu, FILE* equation)
 double SolveLinear(struct spu_t* spu)
 {
         assert(spu);
+        assert(spu->registers);
 
         double x1 = 0;
 
@@ -101,6 +103,7 @@ int IsEqual(double elem1, double elem2)
 void WriteSquareEquation(struct spu_t* spu, double x1, double x2, FILE* equation)
 {
     assert(spu);
+    assert(spu->registers);
     assert(equation);
 
     static int first_equation = 1;

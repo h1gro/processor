@@ -15,7 +15,7 @@ void LaunchCommand(struct spu_t* spu)
 
     FILE* equation = NULL;
 
-    for(spu->ip = 0; spu->ip < spu->code_elems; spu->ip++)
+    for (spu->ip = 0; spu->ip < spu->code_elems; spu->ip++)
     {
         double arg1 = 0, arg2 = 0;
 
@@ -37,14 +37,14 @@ void LaunchCommand(struct spu_t* spu)
 
             case ADD:
             {
-                StackPush(&spu->stk, StackPop(&spu->stk) + StackPop(&spu->stk));
+                StackPush(&spu->stk, StackPop(&spu->stk, __func__, __LINE__) + StackPop(&spu->stk, __func__, __LINE__));
                 break;
             }
 
             case SUB:
             {
-                arg1 = StackPop(&spu->stk);
-                arg2 = StackPop(&spu->stk);
+                arg1 = StackPop(&spu->stk, __func__, __LINE__);
+                arg2 = StackPop(&spu->stk, __func__, __LINE__);
 
                 StackPush(&spu->stk, arg2 - arg1);
                 break;
@@ -52,8 +52,8 @@ void LaunchCommand(struct spu_t* spu)
 
             case MUL:
             {
-                arg1 = StackPop(&spu->stk);
-                arg2 = StackPop(&spu->stk);
+                arg1 = StackPop(&spu->stk, __func__, __LINE__);
+                arg2 = StackPop(&spu->stk, __func__, __LINE__);
 
                 StackPush(&spu->stk, arg1 * arg2);
                 break;
@@ -61,8 +61,8 @@ void LaunchCommand(struct spu_t* spu)
 
             case DIV:
             {
-                arg1 = StackPop(&spu->stk);
-                arg2 = StackPop(&spu->stk);
+                arg1 = StackPop(&spu->stk, __func__, __LINE__);
+                arg2 = StackPop(&spu->stk, __func__, __LINE__);
 
                 if (arg1 == 0)
                 {
@@ -82,7 +82,19 @@ void LaunchCommand(struct spu_t* spu)
 
             case OUT:
             {
-                printf("%lg", StackPop(&spu->stk));
+                printf("%lg", StackPop(&spu->stk, __func__, __LINE__));
+                break;
+            }
+
+            case POP:
+            {
+                spu->ip++;
+
+                int ip_register = spu->code[spu->ip] * (-1) - 1;
+
+                printf("spu->code[%d] = %d\nip_register = %d\n", spu->ip, spu->code[spu->ip], ip_register);
+
+                spu->registers[ip_register] = 0;
                 break;
             }
 
@@ -108,18 +120,21 @@ void LaunchCommand(struct spu_t* spu)
                 break;
             }
 
-            case JB:   JUMP(>);
-
             case JBE:  JUMP(>=);
 
-            case JA:   JUMP(<);
+            case JB:   JUMP(>);
 
             case JAE:  JUMP(<=);
+
+            case JA:   JUMP(<);
 
             case HLT:  break;
 
             default: printf("\n<<<<<<SYNTAX ERROR>>>>>>: %d\n\n", spu->code[spu->ip]);
         }
+
+        printf("ax = %lg, bx = %lg, cx = %lg, dx = %lg\n", spu->registers[0], spu->registers[1], spu->registers[2], spu->registers[3]);
+
     }
 
     if (equation)
@@ -134,6 +149,10 @@ void LaunchCommand(struct spu_t* spu)
 
 void UniversalPush(struct spu_t* spu)
 {
+    assert(spu);
+    assert(spu->code);
+    assert(spu->ip >= 0);
+
     int arg1 = 0;
 
     spu->ip++;
@@ -164,40 +183,11 @@ void UniversalPush(struct spu_t* spu)
 
     else if (push_code == CMD_REG_TO_STACK)
     {
-        int ip_register = 0;
-
         spu->ip++;
 
         printf("\nMY HAHAH = %d\n\n", spu->code[spu->ip]);
 
-        switch(spu->code[spu->ip])
-        {
-            case AX:
-            {
-                WHAT_IS_REG(AX);
-                break;
-            }
-
-            case BX:
-            {
-                WHAT_IS_REG(BX);
-                break;
-            }
-
-            case CX:
-            {
-                WHAT_IS_REG(CX);
-                break;
-            }
-
-            case DX:
-            {
-                WHAT_IS_REG(DX);
-                break;
-            }
-
-            default:    printf("\n<<<<<<WRONG REGISTER!>>>>>>\n\n");
-        }
+        int ip_register = spu->code[spu->ip] * (-1) - 1;
 
         printf("\nIP_REGISTER1 = %d, what[reg] = %lg\n\n", ip_register, spu->registers[ip_register]);
         spu->ip++;
@@ -240,6 +230,7 @@ void UniversalPush(struct spu_t* spu)
 
 regs PushRegister(struct spu_t* spu, double* data, int reg)
 {
+    assert(spu);
     assert(data);
 
     printf("\nreg = %d\n", reg);

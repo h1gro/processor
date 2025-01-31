@@ -3,42 +3,34 @@
 
 #include "../Commands.h"
 
-#define JUMP(COMPARISON_SIGN)                                                  \
-do{                                                                            \
-    arg1 = StackPop(&spu->stk);                                                \
-    arg2 = StackPop(&spu->stk);                                                \
-    if (arg2 COMPARISON_SIGN arg1)                                             \
-    {                                                                          \
-        spu->ip = spu->code[spu->ip + CMD_SHIFT] - CMD_SHIFT;                  \
-    }                                                                          \
-    spu->ip++;                                                                 \
-    break;                                                                     \
-}                                                                              \
+#define  JUMP(COMPARISON_SIGN)                                                     \
+do{                                                                                \
+    arg1 = StackPop(&spu->stk, __func__, __LINE__);                                \
+    arg2 = StackPop(&spu->stk, __func__, __LINE__);                                \
+    if (arg2 COMPARISON_SIGN arg1)                                                 \
+    {                                                                              \
+        spu->ip = spu->code[spu->ip + CMD_SHIFT] - CMD_SHIFT;                      \
+    }                                                                              \
+    else {spu->ip++;}                                                              \
+    break;                                                                         \
+}                                                                                  \
 while(0)
 
-#define REGS(NAME_REGISTER)                                                    \
-do{                                                                            \
-    if (reg == NAME_REGISTER)                                                  \
-    {                                                                          \
-    data[NAME_REGISTER * (- 1) - 1] += StackPop(&spu->stk);                    \
-    printf("data[%s]: %lg\n", #NAME_REGISTER, data[NAME_REGISTER * (- 1) - 1]); \
-    return NAME_REGISTER;                                                      \
-    }                                                                          \
-}                                                                              \
+#define REGS(NAME_REGISTER)                                                        \
+do{                                                                                \
+    if (reg == NAME_REGISTER)                                                      \
+    {                                                                              \
+    data[NAME_REGISTER * (- 1) - 1] += StackPop(&spu->stk, __func__, __LINE__);    \
+    return NAME_REGISTER;                                                          \
+    }                                                                              \
+}                                                                                  \
 while(0)
 
-#define WHAT_IS_REG(COMMAND_ENUM)             \
-do{                                           \
-    ip_register = COMMAND_ENUM * (- 1) - 1;        \
-}                     \
-while(0)
-
-#define WHAT_IS_OPER(OPERATOR)             \
-do{                                           \
-    spu->ip++;          \
-    printf("\nGEGEGE register = %lg ++++ num = %d\n\n", spu->registers[ip_register], spu->code[spu->ip]);\
-    StackPush(&spu->stk, spu->registers[ip_register] OPERATOR spu->code[spu->ip]);        \
-}                     \
+#define WHAT_IS_OPER(OPERATOR)                                                     \
+do{                                                                                \
+    spu->ip++;                                                                     \
+    StackPush(&spu->stk, spu->registers[ip_register] OPERATOR spu->code[spu->ip]); \
+}                                                                                  \
 while(0)
 
 static const char* BYTE_CODE_R = "../byte_code.txt";
