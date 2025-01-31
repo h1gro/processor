@@ -20,8 +20,11 @@ enum comands
     JBE        = 14,
     JA         = 15,
     JAE        = 16,
-    SSQRT      = 17,
-    POP        = 18,
+    JE         = 17,
+    JNE        = 18,
+    SSQRT      = 19,
+    POP        = 20,
+    CIRCLE     = 21,
 };
 
 enum regs
@@ -37,6 +40,7 @@ enum encodings
     CMD_STACK_PUSH   = 0,
     CMD_REG_PUSH     = 1,
     CMD_REG_TO_STACK = 2,
+    CMD_MEMORY_PUSH  = 3,
 };
 
 /*              Encoding Instrations:
