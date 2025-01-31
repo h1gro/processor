@@ -8,22 +8,34 @@ void FindLabel(struct assembler* assm)
 {
     assert(assm);
     assert(assm->command);
-    assert(assm->size_label_arr);
+
+    bool label_found = 0;
 
     for (int i = 0; i < assm->size_label_arr; i++)
     {
         assert(assm->labels[i].label);
-        assert(assm->labels[i].addr != INVALID_ADDR);
 
         if (strcmp((const char*)assm->command, (const char*)assm->labels[i].label) == 0)
         {
             printf("\n\n addr label = %d!!!\n\n\n", assm->labels[i].addr);
             fprintf(assm->byte_code_write, "%d", assm->labels[i].addr);
-        }
 
-        else
+            label_found = 1;
+        }
+    }
+
+    if (label_found)
+    {
+        for (int i = 0; i < assm->size_label_arr; i++)
         {
-            printf("\n<<<<<<unknown mark!>>>>>>\n\n");
+            if (assm->labels[i].addr == NULL_ADDR)
+            {
+                strcpy(assm->labels[i].label, (const char*)assm->command);
+
+                assm->labels[i].addr = INVALID_ADDR;
+                fprintf(assm->byte_code_write, "%d", assm->labels[i].addr);
+                break;
+            }
         }
     }
 }
@@ -33,12 +45,19 @@ void LabelAssignment(struct assembler* assm)
     assert(assm->command);
     assert(assm->labels);
 
-    assert(assm->labels[assm->size_label_arr].addr == -1);
     assert(assm->labels[assm->size_label_arr].label);
 
     if (assm->input_code[assm->index] == ':')
     {
-        assm->labels[assm->size_label_arr].addr  = assm->num_elem_file;
+        for (int i = 0; i < assm->size_label_arr; i++)
+        {
+            if (assm->labels[i].addr == INVALID_ADDR)
+            {
+                assm->labels[i].addr == assm->num_elem_file;
+            }
+        }
+
+        assm->labels[assm->size_label_arr].addr = assm->num_elem_file;
 
         strcpy(assm->labels[assm->size_label_arr].label, (const char*)assm->command);
 

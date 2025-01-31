@@ -18,6 +18,10 @@ int main()
 
     CompileCommands(&assm); //TODO двухпроходная компиляция не работает
 
+    fseek(assm.byte_code_write, 0L, SEEK_SET);
+    
+    CompileCommands(&assm);
+
     StructAssmDtor(&assm);
 
     LabelsDtor(&assm);

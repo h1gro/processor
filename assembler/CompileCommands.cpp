@@ -278,11 +278,12 @@ int WriteCommand(struct assembler* assm)
     assert(assm->command);
 
     assm->cmd_size = 0;
+    int symbols = 0;
     printf("\nI AM WRITING A COMMAND!\n\n");
 
     while ((assm->input_code[assm->index] != '\n') && (assm->input_code[assm->index] != '\0') && (assm->input_code[assm->index] != ' ') && (assm->input_code[assm->index] != '\r') && (assm->input_code[assm->index] != ':'))
     {
-        if (((assm->input_code[assm->index] == '+') || (assm->input_code[assm->index] == '-') || (assm->input_code[assm->index] == '*') || (assm->input_code[assm->index] == '/')) && (assm->cmd_size != 0))
+        if (((assm->input_code[assm->index] == '+') || (assm->input_code[assm->index] == '-') || (assm->input_code[assm->index] == '*') || (assm->input_code[assm->index] == '/')) && (symbols != 0))
         {
             return OPER_ARG;
         }
@@ -298,6 +299,7 @@ int WriteCommand(struct assembler* assm)
 
         assm->cmd_size++;
         assm->index++;
+        symbols++;
     }
 
     return NOT_OPER_ARG;
