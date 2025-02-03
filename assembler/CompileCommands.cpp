@@ -13,9 +13,7 @@ void CompileCommands(struct assembler* assm)
     assert(assm->byte_code_write);
     assert(assm->labels);
 
-    char jmp_arg[SIZE_LABEL] = {};
-
-    assert(jmp_arg);
+    assm->num_elem_file = 0;
 
     for (assm->index = 0; assm->index < assm->capacity; assm->index++)
     {
@@ -27,7 +25,7 @@ void CompileCommands(struct assembler* assm)
 
         COMPILATION(POP);
 
-        COMPILATION(JUMP);
+        COMPILATION(JMP);
 
         COMPILATION(JB);
 
@@ -36,6 +34,10 @@ void CompileCommands(struct assembler* assm)
         COMPILATION(JA);
 
         COMPILATION(JAE);
+
+        COMPILATION(JE);
+
+        COMPILATION(JNE);
 
         COMPILATION(SUB);
 
@@ -53,14 +55,13 @@ void CompileCommands(struct assembler* assm)
 
         COMPILATION(CIRCLE);
 
+        COMPILATION(CALL);
+
+        COMPILATION(RET);
+
         COMPILATION(HLT);
 
-        // if (strcasecmp((const char*)assm->command, "factorial") == 0)
-        // {
-        //     FactorialCode(assm);
-        // }
-
-        for (int j = 0; j < 5; j++)
+        for (int j = 0; j < 10; j++)
         {
             printf("%c", assm->command[j]);
         }
@@ -124,9 +125,14 @@ void CheckArg(struct assembler* assm)
         fprintf(assm->byte_code_write, "%d", DefineReg(assm));
 
         free(assm->command);
+
+        assm->num_elem_file++;
     }
 
-    else if ((assm->last_command == JUMP) || (assm->last_command == JBE) || (assm->last_command == JB) || (assm->last_command == JA) || (assm->last_command == JAE))
+    else if ((assm->last_command == JMP) || (assm->last_command == JBE)
+          || (assm->last_command == JB)  || (assm->last_command == JA)
+          || (assm->last_command == JAE) || (assm->last_command == JE)
+          || (assm->last_command == JNE) || (assm->last_command == CALL))
     {
         assm->index++;
 
@@ -167,6 +173,8 @@ void UniversalPush(struct assembler* assm)
         }
 
         free(assm->command);
+
+        assm->num_elem_file += 2;
     }
 
     else
@@ -316,6 +324,8 @@ int CheckRegs(struct assembler* assm)
     REGS(CX);
 
     REGS(DX);
+
+    REGS(EX);
 
     return NO_REGS;
 }

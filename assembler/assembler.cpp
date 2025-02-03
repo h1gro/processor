@@ -6,9 +6,9 @@
 
 int main()
 {
-    struct assembler assm                = {};
-    struct stat st_file                  = {};
-    struct label labels[NUMBER_OF_MARKS] = {};
+    struct assembler assm                 = {};
+    struct stat st_file                   = {};
+    struct label labels[NUMBER_OF_LABELS] = {};
 
     InitStat(&st_file);
 
@@ -19,7 +19,7 @@ int main()
     CompileCommands(&assm); //TODO двухпроходная компиляция не работает
 
     fseek(assm.byte_code_write, 0L, SEEK_SET);
-    
+
     CompileCommands(&assm);
 
     StructAssmDtor(&assm);

@@ -79,7 +79,7 @@ void FillingStructLabels(struct assembler* assm, int poison, funcs func_call)
 {
     if (func_call == CTOR)
     {
-        for (int i = 0; i < NUMBER_OF_MARKS; i++)
+        for (int i = 0; i < NUMBER_OF_LABELS; i++)
         {
             assm->labels[i].addr  = poison;
 
@@ -89,7 +89,7 @@ void FillingStructLabels(struct assembler* assm, int poison, funcs func_call)
 
     else if (func_call == DTOR)
     {
-        for (int i = 0; i < NUMBER_OF_MARKS; i++)
+        for (int i = 0; i < NUMBER_OF_LABELS; i++)
         {
             assm->labels[i].addr  = poison;
 

@@ -22,15 +22,16 @@ do{                                                                             
 }                                                                                         \
 while(0)
 
-const int MAX_SIZE_COM    = 15;
-const int NUMBER_OF_MARKS = 10;
-const int NO_REGS         = 69;
-const int NUM_REGS        = 4;
-const int SIZE_REG        = 4;  // 2 symbols of register + \n + \r
-const int SIZE_LABEL      = 10;
-const int COMMAND_SIZE    = 10;
-const int INVALID_ADDR    = -1;
-const int NULL_ADDR       = 0;
+const int MAX_SIZE_COM     = 15;
+const int NUMBER_OF_LABELS = 10;
+const int NO_REGS          = 69;
+const int NUM_REGS         = 4;
+const int SIZE_REG         = 4;  // 2 symbols of register + \n + \r
+const int SIZE_LABEL       = 10;
+const int COMMAND_SIZE     = 10;
+const int INVALID_ADDR     = -1;
+const int NULL_ADDR        = 0;
+const int YARLY_ADDR       = -153;
 
 enum push_args
 {
@@ -38,6 +39,13 @@ enum push_args
     OPER_ARG     = 200,
     NOT_OPER_ARG = 300,
     MEMORY_PUSH  = 400,
+};
+
+enum label_returns
+{
+    YEARLY_LABEL_ASSIGNED = 90,
+    NOT_A_LABEL           = 91,
+    NEW_LABEL_ASSIGNED    = 92,
 };
 
 enum funcs
@@ -61,15 +69,15 @@ struct assembler
     int   index;
     int   cmd_size;
     int   capacity;
-    int   size_label_arr;
     int   last_command;
     int   num_elem_file;
-    label labels[NUMBER_OF_MARKS];
+    label labels[NUMBER_OF_LABELS];
 };
 
 int  DefineReg           (struct assembler* assm);
 int CheckRegs            (struct assembler* assm);
 int WriteCommand         (struct assembler* assm);
+int LabelAssignment      (struct assembler* assm);
 
 void InitStat            (struct stat* st_file);
 void CompileCommands     (struct assembler* assm);
@@ -79,7 +87,6 @@ void LabelsCtor          (struct assembler* assm);
 void LabelsDtor          (struct assembler* assm);
 void StructAssmDtor      (struct assembler* assm);
 void FindLabel           (struct assembler* assm);
-void LabelAssignment     (struct assembler* assm);
 void StructAssmCtor      (struct assembler* assm, struct stat* st_file);
 void SkipSpaces          (struct assembler* assm, int symbol0, int symbol1);
 void FillingStructLabels (struct assembler* assm, int poison, funcs func_call);
