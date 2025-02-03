@@ -15,7 +15,7 @@ enum comands
     SIN        = 9,
     COS        = 10,
     DUMP       = 11,
-    JUMP       = 12,
+    JMP        = 12,
     JB         = 13,
     JBE        = 14,
     JA         = 15,
@@ -25,6 +25,8 @@ enum comands
     SSQRT      = 19,
     POP        = 20,
     CIRCLE     = 21,
+    CALL       = 22,
+    RET        = 23,
 };
 
 enum regs
@@ -33,6 +35,7 @@ enum regs
     BX = -2,
     CX = -3,
     DX = -4,
+    EX = -5,
 };
 
 enum encodings
