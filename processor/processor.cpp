@@ -17,6 +17,24 @@ int main()
 
     LaunchCommand(&spu);
 
+//     for (int i = 0; i < 21; i++)
+//     {
+//         for (int j = 0; j < 21; j++)
+//         {
+//             printf("%d ", spu.ram[i * 20 + j]);
+// //             if ((spu.ram + (i * 10 + j)) == 0)
+// //             {
+// //                 printf("*");
+// //             }
+// //
+// //             else
+// //             {
+// //                 printf("0");
+// //             }
+//         }
+//         printf("\n");
+//     }
+
     SpuDtor(&spu);
     return 0;
 }

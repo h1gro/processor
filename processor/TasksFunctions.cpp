@@ -6,32 +6,31 @@
 #include "processor.h"
 #include "TasksFunctions.h"
 
-// int DrowCircle(struct spu_t* spu, int radius)
-// {
-//     assert(spu);
-//
-//     FILE* circle = fopen(PROC_CIRCLE, "w");
-//
-//     if (radius < 0) {printf("Unacceptable radius!\n"); return NEGATIVE_RADIUS;}
-//
-//     for (int i = 0; i < (int) sqrt(radius); i++)
-//     {
-//         for (int j = 0; j < (int) sqrt(radius); j++)
-//         {
-//             if ((i * i + j * j) <= radius * radius)
-//             {
-//                 spu->ram[i][j] = "0";
-//             }
-//
-//             else
-//             {
-//                 spu->ram[i][j] = "*";
-//             }
-//         }
-//     }
-//
-//     fclose(circle);
-// }
+void DrowCircle(struct spu_t* spu)
+{
+    assert(spu);
+
+    FILE* circle = fopen(PROC_CIRCLE, "w");
+
+    for (int i = 0; i < 21; i++)
+    {
+        for (int j = 0; j < 21; j++)
+        {
+            if (spu->ram[i * 21 + j] == 0)
+            {
+                fprintf(circle, "* ");
+            }
+
+            else
+            {
+                fprintf(circle, "0 ");
+            }
+        }
+        fprintf(circle, "\n");
+    }
+
+    fclose(circle);
+}
 
 void SolveSquare(struct spu_t* spu, FILE* equation)
 {

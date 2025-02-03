@@ -121,14 +121,13 @@ void LaunchCommand(struct spu_t* spu)
                 break;
             }
 
-//             case CIRCLE:
-//             {
-//                 int radius = StackPop(&spu->stk, __func__, __LINE__);
-//
-//                 DrowCircle(spu, radius);
-//             }
+            case CIRCLE:
+            {
+                DrowCircle(spu);
+                break;
+            }
 
-            case JUMP:
+            case JMP:
             {
                 if (spu) spu->ip = spu->code[spu->ip + CMD_SHIFT] - CMD_SHIFT;
 
@@ -136,24 +135,69 @@ void LaunchCommand(struct spu_t* spu)
                 break;
             }
 
-            case JBE:  JUMP(>=);
+            case CALL:
+            {
+                int addr = spu->code[spu->ip + ARG_SHIFT];
 
-            case JB:   JUMP(>);
+                StackPush(&spu->ret, (double)addr);
 
-            case JAE:  JUMP(<=);
+                if (spu) spu->ip = spu->code[spu->ip + CMD_SHIFT] - CMD_SHIFT;
+                break;
+            }
 
-            case JA:   JUMP(<);
+            case RET:
+            {
+                if (spu) spu->ip = StackPop(&spu->ret, __func__, __LINE__);
+                break;
+            }
 
-            case JE:   JUMP(==);
+            case JBE:
+            {
+                JUMP(>=);
+                break;
+            }
 
-            case JNE:  JUMP(!=);
+            case JB:
+            {
+                JUMP(>);
+                break;
+            }
 
-            case HLT:  break;
+            case JAE:
+            {
+                JUMP(<=);
+                break;
+            }
+
+            case JA:
+            {
+                JUMP(<);
+                break;
+            }
+
+
+            case JE:
+            {
+                JUMP(==);
+                break;
+            }
+
+            case JNE:
+            {
+                JUMP(!=);
+                break;
+            }
+
+            case HLT:
+            {
+                SpuDtor(spu);
+                exit(0);
+            }
 
             default: printf("\n<<<<<<SYNTAX ERROR>>>>>>: %d\n\n", spu->code[spu->ip]);
         }
 
-        printf("ax = %lg, bx = %lg, cx = %lg, dx = %lg\n", spu->registers[0], spu->registers[1], spu->registers[2], spu->registers[3]);
+        printf("ax = %lg, bx = %lg, cx = %lg, dx = %lg, ex = %lg\n", spu->registers[0], spu->registers[1], spu->registers[2], spu->registers[3], spu->registers[4]);
 
     }
 
@@ -162,7 +206,7 @@ void LaunchCommand(struct spu_t* spu)
         fclose(equation);
     }
 
-    printf("ax = %lg, bx = %lg, cx = %lg, dx = %lg\n", spu->registers[0], spu->registers[1], spu->registers[2], spu->registers[3]);
+    printf("ax = %lg, bx = %lg, cx = %lg, dx = %lg, ex = %lg\n", spu->registers[0], spu->registers[1], spu->registers[2], spu->registers[3], spu->registers[4]);
 
     return;
 }
@@ -252,6 +296,7 @@ void UniversalPush(struct spu_t* spu)
         for (int i = 0; i < spu->ram_index; i++)
         {
             printf("%d ", spu->ram[i]);
+
         }
         printf("\n");
 
@@ -280,6 +325,8 @@ regs PushRegister(struct spu_t* spu, double* data, int reg)
         case CX:    REGS(CX);
 
         case DX:    REGS(DX);
+
+        case EX:    REGS(EX);
 
         default:    printf("\n<<<<<<WRONG REGISTER!>>>>>>\n\n");
     }

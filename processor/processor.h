@@ -36,7 +36,7 @@ while(0)
 static const char* BYTE_CODE_R = "../byte_code.txt";
 
 const int NEGATIVE_RADIUS = 44;
-const int RAM_CAPASITY    = 49;
+const int RAM_CAPASITY    = 2000;
 const int NUM_REGISTERS   = 5;
 
 enum consts
@@ -48,6 +48,7 @@ enum consts
 struct spu_t
 {
     stack_t stk;
+    stack_t ret;
     int     ip;
     double* registers;
     int*    code;

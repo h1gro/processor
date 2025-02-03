@@ -10,7 +10,7 @@ const double NO_ROOTS       = 513.513;
 
 
 int IsEqual              (double elem1, double elem2);
-//int DrowCircle           (struct spu_t* spu, int radius);
+void DrowCircle           (struct spu_t* spu);
 
 double SolveLinear       (struct spu_t* spu);
 
